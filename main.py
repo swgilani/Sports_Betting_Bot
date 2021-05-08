@@ -6,6 +6,7 @@ import random
 from User import User
 import pymongo
 from pymongo import MongoClient
+from api import *
 
 
 load_dotenv()
@@ -19,10 +20,8 @@ collection = db['userInfo']
 
 
 
-
-
 #initializing the prefix for the commands that the bot will use
-client = commands.Bot(command_prefix="-")
+client = commands.Bot(command_prefix=";")
 
 sad_words=['sad','depressed','unhappy','angry','mad','miserable','depressed','depressing']
 starter_encouragements=['Cheer up!','Hang in there.','You are a great person!']
@@ -47,7 +46,7 @@ async def on_message(message):
     await client.process_commands(message)
 
 
-#command -hello
+#create an account with 1000$ balance
 @client.command()
 async def register(ctx):
     
@@ -73,6 +72,66 @@ async def beg(ctx):
 
     else:
         await ctx.send("You must register before begging. Please type the -register command")
+
+
+@client.command()
+async def sports(ctx):
+    
+
+    sports = getSports()
+    output = ""
+
+    for sport in sports:
+        output = output+f"{sport['name']} - {sport['key']} \n"
+    
+    await ctx.send("View all the events for a sport with -events <sport_id>\n"+output)
+
+
+@client.command()
+async def events(ctx, key):
+
+    print (getEvents(key))
+    try:
+        events = getEvents(key)
+        output = ""
+
+        for event in events:
+            output = output+f"{event['id']} - {event['teams']} - {event['odds']} - {event['commence_time']} \n"
+    
+        await ctx.send(output)
+
+
+    except Exception as e:
+
+        await ctx.send(e)
+
+
+#bet <amount> <team> <event_id> <key>
+#bet 500 
+
+@client.command()
+async def bet(ctx, amount, team, event_id, key ):
+
+
+
+
+    
+    return
+    
+    
+
+
+    
+
+    
+
+
+@client.command()
+async def test(ctx):
+    await ctx.send(ctx.author.id)
+
+    
+    
     
 
     
