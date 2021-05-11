@@ -2,28 +2,57 @@ import requests
 from datetime import datetime, timezone,timedelta
 import pytz
 from tzlocal import get_localzone # $ pip install tzlocal
+import os
+from dotenv import load_dotenv
+import pymongo
+from pymongo import MongoClient
+#from db import *
 
+load_dotenv()
+oddsKey = str(os.getenv("oddsKey"))
+
+#initializing the database
+cluster = MongoClient("mongodb+srv://wasiq:1234@cluster0.slwju.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+db = cluster['discord']
+collection_userInfo = db['userInfo']
+collection_userBets = db['userBets']
+collection_custom_events = db['custom_events']
 
 
 def getSports():
-    response = requests.get("https://api.the-odds-api.com/v3/sports/?apiKey=64fb42ebaba9cf4af62539cdf4dfdc8e")
+    response = requests.get("https://api.the-odds-api.com/v3/sports/?apiKey="+ oddsKey)
     response_data = response.json()  
 
     sports = []
+    sports.append({"name": "CUSTOM EVENTS", "key": "custom"})
 
     for data in response_data["data"]:
 
         if data["key"].startswith('soccer'):
-            if data['key'] == "soccer_efl_champ" or data['key'] == "soccer_efl_champ" or data['key'] == "soccer_epl" or data['key'] == "soccer_usa_mls" or data['key'] == "soccer_england_league1" or data['key'] == "soccer_england_league2":
+            if data['key'] == "soccer_epl" or data['key'] == "soccer_england_league1":
                 sports.append({"name": data['details'], "key": data['key']})
         else:
             sports.append({"name": data['details'], "key": data['key']})
 
+    
     return sports
 
 
 def getEvents(key):
-        response = requests.get("https://api.the-odds-api.com/v3/odds/?apiKey=64fb42ebaba9cf4af62539cdf4dfdc8e&sport="+key+"&region=us&mkt=h2h&dateFormat=unix&oddsFormat=american")
+
+        if key.lower() == "custom":
+
+            events = []
+
+            data = collection_custom_events.find({})
+
+            for event in data:
+                events.append({"id": event['_id'],"teams": event['teams'], "odds": event['odds'], "commence_time": events['commence_time'], "sport_nice": event['sport_nice']})
+
+            return events 
+
+
+        response = requests.get("https://api.the-odds-api.com/v3/odds/?apiKey=" +oddsKey + "&sport="+key+"&region=us&mkt=h2h&dateFormat=unix&oddsFormat=american")
         response_data = response.json()
 
         events = []
@@ -46,7 +75,7 @@ def getEvents(key):
 
 def getEventInformation(key, eventID):
 
-    response = requests.get("https://api.the-odds-api.com/v3/odds/?apiKey=64fb42ebaba9cf4af62539cdf4dfdc8e&sport="+key+"&region=us&mkt=h2h&dateFormat=unix&oddsFormat=american")
+    response = requests.get("https://api.the-odds-api.com/v3/odds/?apiKey=" +oddsKey +"&sport="+key+"&region=us&mkt=h2h&dateFormat=unix&oddsFormat=american")
     response_data = response.json()
 
     
@@ -54,7 +83,7 @@ def getEventInformation(key, eventID):
     for event in response_data['data']:
 
         api_event_id_substring = event['id'][0:3]
-       
+
         if str(eventID) == api_event_id_substring:
             event_information_temp = event
         

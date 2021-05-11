@@ -9,6 +9,9 @@ from pymongo import MongoClient
 from api import *
 from datetime import datetime
 from image_scraper import *
+#from db import *
+from datetime import datetime, timezone,timedelta
+
 
 
 load_dotenv()
@@ -20,6 +23,8 @@ cluster = MongoClient("mongodb+srv://wasiq:1234@cluster0.slwju.mongodb.net/myFir
 db = cluster['discord']
 collection_userInfo = db['userInfo']
 collection_userBets = db['userBets']
+collection_custom_events = db['custom_events']
+
 
 
 
@@ -34,10 +39,6 @@ starter_encouragements=['Cheer up!','Hang in there.','You are a great person!']
 @client.event  
 async def on_ready():
     print('Bot is ready')
-
-
-
-
 
 
 #on message events for all the incoming messages in the discord server
@@ -82,8 +83,6 @@ async def beg(ctx):
     else:
         await ctx.send("You must register before begging. Please type the -register command")
 
-    
-   
 
 
 @client.command()
@@ -129,7 +128,7 @@ async def sports(ctx):
 @client.command()
 async def events(ctx, key):
 
-   # try:
+# try:
     events = getEvents(key)
     output = ""
     output_id = ""
@@ -151,9 +150,8 @@ async def events(ctx, key):
     embed.set_footer(text="Please use the ;bet < amount > <team number> <event ID> <sport ID> place a bet.")
     await ctx.send(embed=embed)
 
-
-   # except Exception as e:
-     #   await ctx.send("The key you inputting was incorrect or missing. Please type ;help for more information")
+# except Exception as e:
+#   await ctx.send("The key you inputting was incorrect or missing. Please type ;help for more information")
 
 
 #@events.error
@@ -448,6 +446,19 @@ async def help(ctx):
     await ctx.send(embed=embed)
 
 
+#create a new event under the FEATURED EVENTS sport
+@client.command()
+async def addEvent(ctx, eventID, team1,team2, odds1, odds2):
 
+    teams = [team1,team2]
+    odds = [odds1,odds2]
+    #timing = datetime.now()
+
+    #collection_custom_events.insert_one({"_id": eventID,"teams": teams, "odds": odds, "commence_time": timing, "sport_nice": "custom"})
+    collection_userBets.insert_one({"_id": eventID})
+    await ctx.send("New Event Created")
+
+    
+    
 
 client.run(TOKEN)
