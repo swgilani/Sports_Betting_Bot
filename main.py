@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import os
 from dotenv import load_dotenv
-import random
+import random, string
 from User import User
 import pymongo
 from pymongo import MongoClient
@@ -11,6 +11,7 @@ from datetime import datetime
 from image_scraper import *
 #from db import *
 from datetime import datetime, timezone,timedelta
+
 
 
 
@@ -154,9 +155,9 @@ async def events(ctx, key):
 #   await ctx.send("The key you inputting was incorrect or missing. Please type ;help for more information")
 
 
-#@events.error
-#async def on_command_error(ctx, error):
-  #  await ctx.send("Please use the command as follows: ;events <sport key>. You can get the sports key from typing the ;sports command.")
+@events.error
+async def on_command_error(ctx, error):
+    await ctx.send("Please use the command as follows: ;events <sport key>. You can get the sports key from typing the ;sports command.")
 
 @client.command()
 async def bet(ctx,bet,team, eventID,key):
@@ -168,7 +169,11 @@ async def bet(ctx,bet,team, eventID,key):
         userBalance = user['balance']
         
         #getting event info 
-        event_info = getEventInformation(key, eventID)
+        if key.lower() == "custom":  
+            event_info = collection_custom_events.find_one({"_id": eventID})
+        else: 
+            event_info = getEventInformation(key, eventID)
+
         print(event_info)
         teams = event_info['teams']
         teamsvs_string = f"{teams[0]} vs {teams[1]}"
@@ -188,7 +193,8 @@ async def bet(ctx,bet,team, eventID,key):
             
             embed=discord.Embed(title="Your bet was successfully placed!", description=f"{ctx.author.mention}, you placed ${bet} on {teams[int(team)-1]}. Good luck!", color=0x44ff00)
             embed.set_footer(text="Enter the command ;mybets to view your active bets")
-            embed.set_thumbnail(url=str(imageSearch(teamsvs_string)))
+            #embed.set_thumbnail(url=str(imageSearch(teamsvs_string)))
+            embed.set_image(url=str(imageSearch(teamsvs_string)))
             await ctx.send(embed=embed)
 
 
@@ -204,7 +210,7 @@ async def bet(ctx,bet,team, eventID,key):
 
 @bet.error
 async def on_command_error(ctx, error):
-   await ctx.send("Something went wrong. Please make sure you've entered your bet correctly. Type ;help for more information.")
+    await ctx.send("Please make sure you've entered your bet correctly (;bet <bet amount> <team #> <event id> <sport id>). Type ;help for more information.")
 
 
 
@@ -294,6 +300,7 @@ async def payout(ctx,eventID,winner):
     #eventInfo = getEventInformation(key, eventID)
     #teams = {A,B}
     conquisatadors = []
+    key = ""
     
 
     if int(winner) == 1 or int(winner) == 2:
@@ -301,6 +308,7 @@ async def payout(ctx,eventID,winner):
         for bet in bets:
             user_id = bet['user_id']
             user = collection_userInfo.find_one({'_id': user_id})
+            key = bet['key']
 
             if int(winner) == int(bet['team'][1]):
 
@@ -332,6 +340,10 @@ async def payout(ctx,eventID,winner):
                 new_record = ["Loss",eventID,earnings,bet['key'], bet['event_teams']]
                 user_record_temp.append(new_record)
                 collection_userInfo.update_one({"_id":user_id},{"$set": {"record":user_record_temp}})
+
+
+        if key.lower() == "custom":
+            collection_custom_events.delete_one({"_id": eventID})
 
         collection_userBets.delete_many({"event_id": eventID})
         
@@ -425,9 +437,9 @@ async def deletebet(ctx, index):
             embed.set_footer(text="NOTE: You can NOT delete a bet if the event starts in less than 24 hours.")
             await ctx.send(embed=embed)
 
-@deletebet.error
-async def on_command_error(ctx, error):
-    await ctx.send("Please input a valid bet index to delete.")
+# @deletebet.error
+# async def on_command_error(ctx, error):
+#     await ctx.send("Please input a valid bet index to delete.")
 
 
 
@@ -448,14 +460,19 @@ async def help(ctx):
 
 #create a new event under the FEATURED EVENTS sport
 @client.command()
-async def addEvent(ctx, eventID, team1,team2, odds1, odds2):
+async def addEvent(ctx, team1,team2, odds1, odds2):
+
+    #generate random 3 char id 
+  
+    x = ''.join(random.choices(string.ascii_letters + string.digits, k=3))
+    date1 = '22-May-2050 19:54:36'
 
     teams = [team1,team2]
-    odds = [odds1,odds2]
-    #timing = datetime.now()
+    odds = {"h2h":[int(odds1),int(odds2)]}
+    timing = datetime.strptime(date1,'%d-%b-%Y %X')
 
-    #collection_custom_events.insert_one({"_id": eventID,"teams": teams, "odds": odds, "commence_time": timing, "sport_nice": "custom"})
-    collection_userBets.insert_one({"_id": eventID})
+    collection_custom_events.insert_one({"_id": x.lower(),"teams": teams, "odds": odds, "commence_time": str(timing), "sport_nice": "custom"})
+    #collection_userBets.insert_one({"_id": eventID})
     await ctx.send("New Event Created")
 
     

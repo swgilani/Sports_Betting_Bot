@@ -47,7 +47,7 @@ def getEvents(key):
             data = collection_custom_events.find({})
 
             for event in data:
-                events.append({"id": event['_id'],"teams": event['teams'], "odds": event['odds'], "commence_time": events['commence_time'], "sport_nice": event['sport_nice']})
+                events.append({"id": event['_id'],"teams": event['teams'], "odds": event['odds'], "commence_time": event['commence_time'], "sport_nice": event['sport_nice']})
 
             return events 
 
@@ -75,8 +75,11 @@ def getEvents(key):
 
 def getEventInformation(key, eventID):
 
-    response = requests.get("https://api.the-odds-api.com/v3/odds/?apiKey=" +oddsKey +"&sport="+key+"&region=us&mkt=h2h&dateFormat=unix&oddsFormat=american")
-    response_data = response.json()
+    if key.lower() == "custom":  
+        response_data = {"data": collection_custom_events.find_one({"_id": eventID})}
+    else:
+        response = requests.get("https://api.the-odds-api.com/v3/odds/?apiKey=" +oddsKey +"&sport="+key+"&region=us&mkt=h2h&dateFormat=unix&oddsFormat=american")
+        response_data = response.json()
 
     
     event_information_temp = {}
@@ -96,7 +99,7 @@ def getEventInformation(key, eventID):
         return event_information
 
     else:
-        return "null"
+        return "suckit"
 
 
 def switch_timezone(time):
