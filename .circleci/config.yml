@@ -29,7 +29,7 @@ jobs:
       - image: "circleci/python:3.6.4"
     steps:
       - checkout
-      - run: cd tests | python3 -m pytest - v
+      - run: cd tests | python -m pytest - v
 
 workflows:
   build_and_test:
