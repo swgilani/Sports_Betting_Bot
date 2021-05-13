@@ -1,5 +1,10 @@
 version: 2.1
 
+
+orbs:
+  python: circleci/python@3.6.4
+
+
 jobs:
   build:
     working_directory: ~/circleci-python
