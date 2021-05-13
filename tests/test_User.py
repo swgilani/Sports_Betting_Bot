@@ -1,4 +1,4 @@
-from Sports_Betting_Bot import User
+from .. import User
 import pytest
 
 def test_User_with_no_values():

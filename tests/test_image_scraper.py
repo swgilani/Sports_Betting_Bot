@@ -1,4 +1,4 @@
-from Sports_Betting_Bot import image_scraper
+from .. import image_scraper
 import pytest
 
 def test_unage_scraper_with_no_input():

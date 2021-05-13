@@ -1,4 +1,4 @@
-from Sports_Betting_Bot import api
+from .. import api
 import pytest
 
 def test_len_getSports_api():
