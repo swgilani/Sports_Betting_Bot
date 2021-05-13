@@ -1,4 +1,7 @@
-from .. import api
+import sys
+sys.path.insert(0, '/')
+import api
+#from .. import api
 import pytest
 
 def test_len_getSports_api():
