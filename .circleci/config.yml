@@ -13,7 +13,7 @@ jobs:
     steps:
       - checkout
       - run: ls
-      - run: python -m pip install -r requirements.txt
+      - run: python -m pip install --user -r requirements.txt
       # - python/install-packages:
       #     pkg-manager: pip 
       #     pip-dependency-file: requirements.txt  
