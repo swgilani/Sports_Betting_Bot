@@ -22,8 +22,8 @@ def test_oddsConversion_correct(a,b):
 def test_oddsConversion_false():
     assert api.getDecimalOdds(300) != 300
 
-def test_switch_timezone():
-    assert api.switch_timezone(1620868228) == "2021-05-12 21:10:28"
+#def test_switch_timezone():
+    #assert api.switch_timezone(1620868228) == "2021-05-12 21:10:28"
 
 def test_switch_timezone_noInput():
     with pytest.raises(Exception) as e_info:
