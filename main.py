@@ -49,7 +49,7 @@ async def on_message(message):
     if message.author == client.user:
         return
     if any(word in message.content for word in sad_words):
-        embed=discord.Embed(title="Hello", url="https://realdrewdata.medium.com/", description=random.choice(starter_encouragements), color=discord.Color.blue())
+        embed=discord.Embed( description=random.choice(starter_encouragements), color=discord.Color.blue())
         await message.channel.send(embed = embed)
 
     if "reaching" in message.content or "hopping on" in message.content or "coming" in message.content :
