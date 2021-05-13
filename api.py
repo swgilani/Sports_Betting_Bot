@@ -59,16 +59,20 @@ def getEvents(key):
 
         #teams, h2h, commence time, id
         count = 0
-        for event in response_data["data"]:
+        if response_data["success"] == True:
+            for event in response_data["data"]:
 
-        
-            dateTime = switch_timezone(event["commence_time"])
+            
+                dateTime = switch_timezone(event["commence_time"])
 
-            if count <= 15:
-                events.append({"id": event['id'],"teams": event['teams'], "odds": event['sites'][0]['odds'], "commence_time": dateTime, "sport_nice": event['sport_nice']})
-                count = count+1
-            else:
-                return events
+                if count <= 15:
+                    events.append({"id": event['id'],"teams": event['teams'], "odds": event['sites'][0]['odds'], "commence_time": dateTime, "sport_nice": event['sport_nice']})
+                    count = count+1
+                else:
+                    return events
+
+        elif response_data["success"] == False:
+            return response_data
             
         return events
 
@@ -118,8 +122,6 @@ def getDecimalOdds(americanOdds):
         return (1 + (float(americanOdds)/100))
     else:
         return (1 - (100/float(americanOdds)))
-
-
 
     
 
