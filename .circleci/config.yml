@@ -29,12 +29,13 @@ jobs:
       - image: "circleci/python:3.6.4"
     steps:
       - checkout
-      - run: python3 -m pytest -v
+      - run: python -m pip install --user -r requirements.txt
+      - run: cd tests | python -m pytest -v
 
 workflows:
   build_and_test:
     jobs:
-      - build
-      - test:
-          requires:
-            - build
+      #- build
+      - test
+         # requires:
+           # - build
