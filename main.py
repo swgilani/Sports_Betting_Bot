@@ -17,10 +17,11 @@ from datetime import datetime, timezone,timedelta
 
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
+MONGO_CONNECT = str(os.getenv("MONGO_CONNECT"))
 
 
 #initializing the database
-cluster = MongoClient("mongodb+srv://wasiq:1234@cluster0.slwju.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+cluster = MongoClient(MONGO_CONNECT)
 db = cluster['discord']
 collection_userInfo = db['userInfo']
 collection_userBets = db['userBets']
@@ -459,7 +460,8 @@ async def help(ctx):
 
 
 #create a new event under the FEATURED EVENTS sport
-@client.command()
+@client.command(pass_context=True)
+@commands.has_any_role("Papa")
 async def addEvent(ctx, team1,team2, odds1, odds2):
 
     #generate random 3 char id 

@@ -10,9 +10,10 @@ from pymongo import MongoClient
 
 load_dotenv()
 oddsKey = str(os.getenv("oddsKey"))
+MONGO_CONNECT = str(os.getenv("MONGO_CONNECT"))
 
 #initializing the database
-cluster = MongoClient("mongodb+srv://wasiq:1234@cluster0.slwju.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+cluster = MongoClient(MONGO_CONNECT)
 db = cluster['discord']
 collection_userInfo = db['userInfo']
 collection_userBets = db['userBets']
