@@ -12,10 +12,10 @@ jobs:
       - image: "circleci/python:3.6.4"
     steps:
       - checkout
-      
-      - python/install-packages:
-          pkg-manager: pip 
-          pip-dependency-file: requirements.txt  
+      - run: pip install requirements.txt 
+      # - python/install-packages:
+      #     pkg-manager: pip 
+      #     pip-dependency-file: requirements.txt  
       - run: python3 main.py
 
   test:
