@@ -480,4 +480,3 @@ async def addEvent(ctx, team1,team2, odds1, odds2):
     
     
 
-client.run(TOKEN)
