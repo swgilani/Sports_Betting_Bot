@@ -1,3 +1,3 @@
 from main import *
 
-client.run(TOKEN)
+#client.run(TOKEN)
