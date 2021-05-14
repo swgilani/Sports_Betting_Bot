@@ -439,9 +439,9 @@ async def deletebet(ctx, index):
             embed.set_footer(text="NOTE: You can NOT delete a bet if the event starts in less than 24 hours.")
             await ctx.send(embed=embed)
 
-# @deletebet.error
-# async def on_command_error(ctx, error):
-#     await ctx.send("Please input a valid bet index to delete.")
+@deletebet.error
+async def on_command_error(ctx, error):
+    await ctx.send("Please input a valid bet index to delete.")
 
 
 
