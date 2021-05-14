@@ -478,6 +478,6 @@ async def addEvent(ctx, team1,team2, odds1, odds2):
     #collection_userBets.insert_one({"_id": eventID})
     await ctx.send("New Event Created")
 
-    
+    client.run(TOKEN)
     
 
