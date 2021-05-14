@@ -11,7 +11,6 @@ from datetime import datetime
 from image_scraper import *
 #from db import *
 from datetime import datetime, timezone,timedelta
-Test syntax error
 
 
 load_dotenv()
