@@ -481,7 +481,9 @@ async def admin(ctx):
     embed.set_footer(text="Developed by Wowsixk & Fry")
     await ctx.send(embed=embed)
 
- 
+
+@client.command(pass_context=True)
+@commands.has_any_role("Papa")
 async def addEvent(ctx, team1,team2, odds1, odds2):
 
     #generate random 3 char id 
