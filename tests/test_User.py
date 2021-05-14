@@ -1,7 +1,7 @@
 import sys
-#sys.path.insert(0, '/')
-#import User
-from .. import User
+sys.path.insert(0, '/')
+import User
+#from .. import User
 import pytest
 
 def test_User_with_no_values():
