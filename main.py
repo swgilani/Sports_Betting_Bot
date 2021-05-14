@@ -207,9 +207,9 @@ async def bet(ctx,bet,team, eventID,key):
 
     
 
-@bet.error
-async def on_command_error(ctx, error):
-    await ctx.send("Please make sure you've entered your bet correctly (;bet <bet amount> <team #> <event id> <sport id>). Type ;help for more information.")
+#bet.error
+#async def on_command_error(ctx, error):
+    #await ctx.send("Please make sure you've entered your bet correctly (;bet <bet amount> <team #> <event id> <sport id>). Type ;help for more information.")
 
 
 
