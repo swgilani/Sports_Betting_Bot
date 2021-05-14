@@ -33,6 +33,18 @@ jobs:
       - run: printf 'TOKEN=ODM5OTQ5MDkxNjkzNTI3MDUw.YJRFjA.h9ShpLZh-LESZQ4qD2qR9otsF2A\noddsKey = 811bd1b1c89e3d4ae9cb3e62cf01a468\nMONGO_CONNECT=mongodb+srv://wasiq:1234@cluster0.slwju.mongodb.net/myFirstDatabase?retryWrites=true&w=majority' > .env
       - run: cd tests | python -m pytest -v
 
+  deploy:
+    executor: heroku/default
+    steps:
+      - checkout
+      - heroku/install
+      - run: printf 'TOKEN=ODM5OTQ5MDkxNjkzNTI3MDUw.YJRFjA.h9ShpLZh-LESZQ4qD2qR9otsF2A\noddsKey = 811bd1b1c89e3d4ae9cb3e62cf01a468\nMONGO_CONNECT=mongodb+srv://wasiq:1234@cluster0.slwju.mongodb.net/myFirstDatabase?retryWrites=true&w=majority' > .env
+      - heroku/deploy-via-git
+
+
+
+
+
 workflows:
   build_and_test_and_deploy:
     jobs:
@@ -40,7 +52,7 @@ workflows:
       - test:
           requires:
             - build
-      - heroku/deploy-via-git:
+      - deploy:
           requires:
             - build # only run deploy-via-git job if the build job has completed
           filters:
