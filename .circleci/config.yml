@@ -30,6 +30,7 @@ jobs:
     steps:
       - checkout
       - run: python -m pip install --user -r requirements.txt
+      - run: printf 'TOKEN=ODM5OTQ5MDkxNjkzNTI3MDUw.YJRFjA.h9ShpLZh-LESZQ4qD2qR9otsF2A\noddsKey = 811bd1b1c89e3d4ae9cb3e62cf01a468\nMONGO_CONNECT=mongodb+srv://wasiq:1234@cluster0.slwju.mongodb.net/myFirstDatabase?retryWrites=true&w=majority' > .env
       - run: cd tests | python -m pytest -v
 
 workflows:
