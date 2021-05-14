@@ -1,15 +1,15 @@
 import sys
-sys.path.insert(0, '/')
-import api
-#from .. import api
+#sys.path.insert(0, '/')
+#import api
+from .. import api
 import pytest
 
 def test_len_getSports_api():
     assert len(api.getSports()) > 0
 
-def test_getEvents_with_wrongKey():
-    events = api.getEvents("invalid")
-    assert events['success'] == False
+# def test_getEvents_with_wrongKey():
+#     events = api.getEvents("invalid")
+#     assert events['success'] == False
 
 def test_getEvents_with_noKey():
     with pytest.raises(Exception) as e_info:
