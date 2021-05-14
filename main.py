@@ -61,15 +61,21 @@ async def on_message(message):
 async def register(ctx):
     
     user = User(ctx.author.id,1000)
+    user_name = ctx.author.mention
 
     try:
+
         collection_userInfo.insert_one({"_id":user.getId(),"balance": user.getBalance(), "record": []})
-        await ctx.send("UserID:"+str(user.getId())+" Balance:"+str(user.getBalance()))
+        embed=discord.Embed(title="Account Created", description=f"{user_name}Your account was successfully created", color=0x11ff00)
+        embed.add_field(name=";account", value="Please use the above command to view your account information", inline=False)
+        await ctx.send(embed=embed) 
     except:
-        await ctx.send(ctx.author.mention+", your account is already registered.")
+        embed=discord.Embed(title="Error creating your account", description=f"{user_name}, your account is already registered.", color=0xc70014)
+        await ctx.send(embed=embed)
 
 
-@client.command()
+@client.command(pass_context=True)
+@commands.has_any_role("Papa")
 async def beg(ctx):
     author = ctx.author.id
     
@@ -85,7 +91,8 @@ async def beg(ctx):
 
 
 
-@client.command()
+@client.command(pass_context=True)
+@commands.has_any_role("Papa")
 async def superbeg(ctx):
     author = ctx.author.id
     
@@ -128,7 +135,7 @@ async def sports(ctx):
 @client.command()
 async def events(ctx, key):
 
-# try:
+ try:
     events = getEvents(key)
     output = ""
     output_id = ""
@@ -147,11 +154,11 @@ async def events(ctx, key):
     embed.add_field(name="Event ID", value=output_id, inline=True)
     embed.add_field(name="Teams (1 & 2)", value=output_teams, inline=True)
     embed.add_field(name="Odds", value=output_odds_and_time, inline=True)
-    embed.set_footer(text="Please use the ;bet < amount > <team number> <event ID> <sport ID> place a bet.")
+    embed.set_footer(text=f"Please use the ;bet < amount > <team number> <event ID> {key} place a bet.")
     await ctx.send(embed=embed)
 
-# except Exception as e:
-#   await ctx.send("The key you inputting was incorrect or missing. Please type ;help for more information")
+ except Exception as e:
+   await ctx.send("The key you inputting was incorrect or missing. Please type ;help for more information")
 
 
 @events.error
@@ -460,9 +467,7 @@ async def help(ctx):
     await ctx.send(embed=embed)
 
 
-#create a new event under the FEATURED EVENTS sport
-@client.command(pass_context=True)
-@commands.has_any_role("Papa")
+ 
 async def addEvent(ctx, team1,team2, odds1, odds2):
 
     #generate random 3 char id 
@@ -478,11 +483,6 @@ async def addEvent(ctx, team1,team2, odds1, odds2):
     #collection_userBets.insert_one({"_id": eventID})
     await ctx.send("New Event Created")
 
-
-
-@client.command()
-async def test(ctx):
-    await ctx.send("Test command to see if CD works.")
 
 
 
