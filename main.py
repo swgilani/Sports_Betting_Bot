@@ -472,6 +472,15 @@ async def help(ctx):
     await ctx.send(embed=embed)
 
 
+@client.command()
+async def admin(ctx):
+    embed=discord.Embed(title="Admin Commands", description="If you are not an admin, close your eyes", color=0x8c6ef0)
+    embed.add_field(name=";payout <eventID> <winner>", value="The winner must be values '1' or '2'. This command payouts everyone with a bet for a given ID and then deletes their bet. ", inline=False)
+    embed.add_field(name=";addEvent <team1> <team2> <odds1> <odds2> ", value="This command will add an event to the custom sports section", inline=False)
+    embed.add_field(name=";admin", value="This command displays this embed xd", inline=False)
+    embed.set_footer(text="Developed by Wowsixk & Fry")
+    await ctx.send(embed=embed)
+
  
 async def addEvent(ctx, team1,team2, odds1, odds2):
 
