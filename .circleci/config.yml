@@ -49,13 +49,13 @@ jobs:
 workflows:
   build_and_test_and_deploy:
     jobs:
-     # - build
-     # - test:
-      #    requires:
-       #     - build
+      - build
+      - test:
+          requires:
+            - build
       - deploy:
-         # requires:
-          #  - build # only run deploy-via-git job if the build job has completed
+          requires:
+            - test
           filters:
             branches:
               only: master # only run deploy-via-git job on master branch

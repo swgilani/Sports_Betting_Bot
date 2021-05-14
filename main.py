@@ -480,6 +480,11 @@ async def addEvent(ctx, team1,team2, odds1, odds2):
 
 
 
+@client.command()
+async def test(ctx):
+    await ctx.send("Test command to see if CD works.")
+
+
 
 client.run(TOKEN)
     
