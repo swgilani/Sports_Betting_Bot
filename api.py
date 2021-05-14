@@ -47,6 +47,9 @@ def getEvents(key):
 
             data = collection_custom_events.find({})
 
+            if not data:
+                return events
+
             for event in data:
                 events.append({"id": event['_id'],"teams": event['teams'], "odds": event['odds'], "commence_time": event['commence_time'], "sport_nice": event['sport_nice']})
 

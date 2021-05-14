@@ -141,21 +141,26 @@ async def events(ctx, key):
     output_id = ""
     output_teams = ""
     output_odds_and_time = ""
+
+    if not events:
+        embed=discord.Embed(title=f"Could not find any events for this sport. Please try again later.",color=0x001cf0)
+        await ctx.send(embed=embed)
     
-    for event in events:
-        datetime_object = datetime.strptime(event['commence_time'], '%Y-%m-%d %H:%M:%S')
-        datetime_object = datetime_object.date()
-        output = output+f"{event['id'][0:3]} | {event['teams'][0]} vs. {event['teams'][1]} | {event['odds']['h2h'][0]} to {event['odds']['h2h'][1]} | {datetime_object} \n"
-        output_id = output_id+f"{event['id'][0:3]} \n"
-        output_teams = output_teams+f"{event['teams'][0]} vs. {event['teams'][1]} \n"
-        output_odds_and_time = output_odds_and_time+f"{event['odds']['h2h'][0]} to {event['odds']['h2h'][1]} \n"
-        name = event['sport_nice']
-    embed=discord.Embed(title=f"Upcoming events for {name}", description="Event information for upcoming events",color=0x001cf0)
-    embed.add_field(name="Event ID", value=output_id, inline=True)
-    embed.add_field(name="Teams (1 & 2)", value=output_teams, inline=True)
-    embed.add_field(name="Odds", value=output_odds_and_time, inline=True)
-    embed.set_footer(text=f"Please use the ;bet < amount > <team number> <event ID> {key} place a bet.")
-    await ctx.send(embed=embed)
+    else:    
+        for event in events:
+            datetime_object = datetime.strptime(event['commence_time'], '%Y-%m-%d %H:%M:%S')
+            datetime_object = datetime_object.date()
+            output = output+f"{event['id'][0:3]} | {event['teams'][0]} vs. {event['teams'][1]} | {event['odds']['h2h'][0]} to {event['odds']['h2h'][1]} | {datetime_object} \n"
+            output_id = output_id+f"{event['id'][0:3]} \n"
+            output_teams = output_teams+f"{event['teams'][0]} vs. {event['teams'][1]} \n"
+            output_odds_and_time = output_odds_and_time+f"{event['odds']['h2h'][0]} to {event['odds']['h2h'][1]} \n"
+            name = event['sport_nice']
+        embed=discord.Embed(title=f"Upcoming events for {name}", description="Event information for upcoming events",color=0x001cf0)
+        embed.add_field(name="Event ID", value=output_id, inline=True)
+        embed.add_field(name="Teams (1 & 2)", value=output_teams, inline=True)
+        embed.add_field(name="Odds", value=output_odds_and_time, inline=True)
+        embed.set_footer(text=f"Please use the ;bet < amount > <team number> <event ID> {key} place a bet.")
+        await ctx.send(embed=embed)
 
  except Exception as e:
    await ctx.send("The key you inputting was incorrect or missing. Please type ;help for more information")
