@@ -378,6 +378,7 @@ async def mybets(ctx):
 
     if not output:
         await ctx.send("You currently have no active bets.")
+        #a random comment
     else:
         bet_indices = ""
         bet_amount = ""
