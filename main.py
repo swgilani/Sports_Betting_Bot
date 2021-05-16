@@ -127,7 +127,7 @@ async def sports(ctx):
     embed.set_thumbnail(url="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj84vwyPYMqE6DB-4BBK1LBBrfnpEoR--MOw&usqp=CAU")
     embed.add_field(name='Sport', value=output_name, inline=True)
     embed.add_field(name="Sport ID", value=output_key, inline=True)
-    embed.set_footer(text="Please use the ;event <ID> command to view the current events for the sports.")
+    embed.set_footer(text="Please use the ;event <ID> command to view the current events for the sports.\nExample: ;events custom")
     await ctx.send(embed=embed)
     
 
@@ -159,7 +159,7 @@ async def events(ctx, key):
         embed.add_field(name="Event ID", value=output_id, inline=True)
         embed.add_field(name="Teams (1 & 2)", value=output_teams, inline=True)
         embed.add_field(name="Odds", value=output_odds_and_time, inline=True)
-        embed.set_footer(text=f"Please use the ;bet < amount > <team number> <event ID> {key} place a bet.")
+        embed.set_footer(text=f"Please use the ';bet < amount > <team number> <event ID> <sport>' to place a bet. \nExample: ;bet 100 2 4w1 {key}")
         await ctx.send(embed=embed)
 
  except Exception as e:
@@ -406,6 +406,56 @@ async def mybets(ctx):
         embed.add_field(name="Event", value=bet_event, inline=True)
         embed.set_footer(text="Enter ;deletebet <bet #> if you would wish to delete a bet. Type ;help for more information.")
         await ctx.send(embed=embed)
+    
+
+@client.command(pass_context=True)
+@commands.has_any_role("Papa")
+async def payoutlist(ctx):
+    
+    author = ctx.author.id
+
+    bets = collection_userBets.find({})
+
+    #event_id, teams
+
+    output = []
+    output2 = []
+
+    if not bets: 
+        await ctx.send("There are no current events to be paid out.")
+    else: 
+
+        #get the list of all the events from all the bets, and remove duplicates from the array 
+        for bet in bets:   
+
+            if not output: 
+                output.append(bet)
+                output2.append(bet['event_id'])
+
+            else: 
+                if bet['event_id'] not in output2:
+                    #print(f"{bet['event_id']}  ==  {output[i]['event_id']}")
+                    #print(f"{bet['event_id']}  ==  {output[i]['event_id']}")
+                    output.append(bet)
+                    output2.append(bet['event_id'])
+            
+
+
+        eventNumber = ""
+        eventID = ""
+        eventTeams=""
+
+        for i in range(len(output)):
+            eventNumber = eventNumber+f"{i+1} \n"
+            eventID = eventID+f"{output[i]['event_id']}  \n"
+            eventTeams = eventTeams+ f"{output[i]['event_teams'][0]} vs. {output[i]['event_teams'][1]} \n"
+
+        embed=discord.Embed(title="All Current Events", description=f" These are all the events which have not been paid out.", color=0xf5cb42)
+        embed.add_field(name="#", value=eventNumber, inline=True)
+        embed.add_field(name="Event ID", value=eventID, inline=True)
+        embed.add_field(name="Teams", value=eventTeams, inline=True)
+        embed.set_footer(text="Enter ;payoutlist to display this embed xd")
+        await ctx.send(embed=embed)
 
 
 
@@ -481,7 +531,7 @@ async def admin(ctx):
     embed.set_footer(text="Developed by Wowsixk & Fry")
     await ctx.send(embed=embed)
 
- 
+@client.command()
 async def addEvent(ctx, team1,team2, odds1, odds2):
 
     #generate random 3 char id 
@@ -496,7 +546,6 @@ async def addEvent(ctx, team1,team2, odds1, odds2):
     collection_custom_events.insert_one({"_id": x.lower(),"teams": teams, "odds": odds, "commence_time": str(timing), "sport_nice": "custom"})
     #collection_userBets.insert_one({"_id": eventID})
     await ctx.send("New Event Created")
-
 
 
 
