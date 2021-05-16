@@ -172,7 +172,7 @@ async def on_command_error(ctx, error):
 
 @client.command()
 async def bet(ctx,bet,team, eventID,key):
-   
+
 
     author = ctx.author.id
     if collection_userInfo.find_one({"_id": author}):
@@ -421,7 +421,7 @@ async def payoutlist(ctx):
     output = []
     output2 = []
 
-    if not bets: 
+    if bets.count() == 0: 
         await ctx.send("There are no current events to be paid out.")
     else: 
 
@@ -449,6 +449,15 @@ async def payoutlist(ctx):
             eventNumber = eventNumber+f"{i+1} \n"
             eventID = eventID+f"{output[i]['event_id']}  \n"
             eventTeams = eventTeams+ f"{output[i]['event_teams'][0]} vs. {output[i]['event_teams'][1]} \n"
+        
+        print(f"eventNumber: {eventNumber}")
+        print(f"eventID: {eventID}")
+        print(f"eventTeams: {eventTeams}")
+
+        # if eventNumber == "":
+        #     eventID = "x"
+        #     eventNumber ="x"
+        #     eventTeams = "x"
 
         embed=discord.Embed(title="All Current Events", description=f" These are all the events which have not been paid out.", color=0xf5cb42)
         embed.add_field(name="#", value=eventNumber, inline=True)
