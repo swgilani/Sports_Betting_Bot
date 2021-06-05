@@ -60,7 +60,8 @@ async def on_message(message):
 @client.command()
 async def register(ctx):
     
-    user = User(ctx.author.id,1000)
+    default_bal = 1000.00
+    user = User(ctx.author.id,default_bal)
     user_name = ctx.author.mention
 
     try:
@@ -78,13 +79,22 @@ async def register(ctx):
 @commands.has_any_role("Papa")
 async def beg(ctx):
     author = ctx.author.id
+    beg_amount = 500.00
     
     if collection_userInfo.find({"_id": author}):
+
+        #if the users balance is <500 and they have no current bets 
         user = collection_userInfo.find_one({"_id": author})
-        balance = user['balance']
-        balance = balance+5
-        collection_userInfo.update_one({"_id":author}, {"$set": {"balance": balance}})
-        await ctx.send("Someone gave you a few bucks! You now have $"+str(balance))
+        if user['balance'] < beg_amount and not collection_userBets.find_one({"user_id":author}):
+            collection_userInfo.update_one({"_id":author}, {"$set": {"balance": beg_amount}})
+            await ctx.send("Someone gave you a few bucks! You now have $"+str(beg_amount))
+        
+        else: 
+            await ctx.send("You must have less than $500 (with no active bets) to beg. ")
+
+        # balance = user['balance']
+        # balance = balance+5
+        # collection_userInfo.update_one({"_id":author}, {"$set": {"balance": balance}})
 
     else:
         await ctx.send("You must register before begging. Please type the -register command")
@@ -127,7 +137,7 @@ async def sports(ctx):
     embed.set_thumbnail(url="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQj84vwyPYMqE6DB-4BBK1LBBrfnpEoR--MOw&usqp=CAU")
     embed.add_field(name='Sport', value=output_name, inline=True)
     embed.add_field(name="Sport ID", value=output_key, inline=True)
-    embed.set_footer(text="Please use the ;event <ID> command to view the current events for the sports.\nExample: ;events custom")
+    embed.set_footer(text="Please use the ;events <Sport ID> command to view the current events for the sports.\nExample: ;events custom")
     await ctx.send(embed=embed)
     
 
@@ -141,6 +151,7 @@ async def events(ctx, key):
     output_id = ""
     output_teams = ""
     output_odds_and_time = ""
+    output_date = ""
 
     if not events:
         embed=discord.Embed(title=f"Could not find any events for this sport. Please try again later.",color=0x001cf0)
@@ -148,9 +159,11 @@ async def events(ctx, key):
     
     else:    
         for event in events:
-            datetime_object = datetime.strptime(event['commence_time'], '%Y-%m-%d %H:%M:%S')
-            datetime_object = datetime_object.date()
-            output = output+f"{event['id'][0:3]} | {event['teams'][0]} vs. {event['teams'][1]} | {event['odds']['h2h'][0]} to {event['odds']['h2h'][1]} | {datetime_object} \n"
+            if key == "custom":
+                conv_date = event['commence_time'].ctime()
+                output_date = output_date+f"{conv_date}\n"
+           
+            #output = output+f"{event['id'][0:3]} | {event['teams'][0]} vs. {event['teams'][1]} | {event['odds']['h2h'][0]} to {event['odds']['h2h'][1]} | {datetime} \n"
             output_id = output_id+f"{event['id'][0:3]} \n"
             output_teams = output_teams+f"{event['teams'][0]} vs. {event['teams'][1]} \n"
             output_odds_and_time = output_odds_and_time+f"{event['odds']['h2h'][0]} to {event['odds']['h2h'][1]} \n"
@@ -159,16 +172,27 @@ async def events(ctx, key):
         embed.add_field(name="Event ID", value=output_id, inline=True)
         embed.add_field(name="Teams (1 & 2)", value=output_teams, inline=True)
         embed.add_field(name="Odds", value=output_odds_and_time, inline=True)
-        embed.set_footer(text=f"Please use the ';bet < amount > <team number> <event ID> <sport>' to place a bet. \nExample: ;bet 100 2 4w1 {key}")
+        embed.set_footer(text=f"Please use the ';bet <amount> <team number> <event ID> <Sport ID>' to place a bet. \nExample: ;bet 100 2 4w1 {key}")
         await ctx.send(embed=embed)
+        
+        if key == "custom":
+            embed2=discord.Embed(title=f"Date & time of {name} events", description="Time information for the events",color=0x001cf0)
+            embed2.add_field(name="Teams (1 & 2)", value=output_teams, inline=True)
+            embed2.add_field(name="Commence Time", value=output_date, inline=True)
+            embed2.set_footer(text=f"Please use the ';bet <amount> <team number> <event ID> <Sport ID>' to place a bet. \nExample: ;bet 100 2 4w1 {key}")
+            await ctx.send(embed=embed2)
+        
+       
+        
 
  except Exception as e:
-   await ctx.send("The key you inputting was incorrect or missing. Please type ;help for more information")
+
+   await ctx.send("The key you inputting was incorrect or missing. Please type ;help for more information. "+str(e))
 
 
-@events.error
-async def on_command_error(ctx, error):
-    await ctx.send("Please use the command as follows: ;events <sport key>. You can get the sports key from typing the ;sports command.")
+# @events.error
+# async def on_command_error(ctx, error):
+#     await ctx.send("Please use the command as follows: ;events <sport key>. You can get the sports key from typing the ;sports command.")
 
 @client.command()
 async def bet(ctx,bet,team, eventID,key):
@@ -176,26 +200,33 @@ async def bet(ctx,bet,team, eventID,key):
 
     author = ctx.author.id
     if collection_userInfo.find_one({"_id": author}):
+        
         user = collection_userInfo.find_one({'_id': author})
         userBalance = user['balance']
         
         #getting event info 
         if key.lower() == "custom":  
             event_info = collection_custom_events.find_one({"_id": eventID})
+            teams = event_info['teams']
+            teamsvs_string = f"{teams[0]} vs {teams[1]}"
+            odds = event_info['odds']['h2h']
+            start = event_info['commence_time']
+            present = datetime.now()
+            
+        
         else: 
             event_info = getEventInformation(key, eventID)
+            teams = event_info['teams']
+            teamsvs_string = f"{teams[0]} vs {teams[1]}"
+            odds = event_info['odds']['h2h']
 
-        print(event_info)
-        teams = event_info['teams']
-        teamsvs_string = f"{teams[0]} vs {teams[1]}"
-        odds = event_info['odds']['h2h']
-        commence_time = event_info['commence_time']
-        present = datetime.now()
-        start = datetime.strptime(commence_time, '%Y-%m-%d %H:%M:%S')
+    
+        if ( (key.lower() != "custom") and (int(userBalance) < int(bet)) or (int(team) != 1 and int(team) != 2) ):
+                await ctx.send("Unable to process your bet. Please check your balance and betting format")
 
-        if ((int(userBalance) < int(bet)) or (present > start) or (int(team) != 1 and int(team) != 2) ):
-            await ctx.send("cant bet")
-        
+        elif ((key.lower() == "custom") and (int(userBalance) < int(bet)) or (present > start) or (int(team) != 1 and int(team) != 2) ):
+                await ctx.send("Unable to process your bet. Please check your balance and betting format")
+            
         else:
             
             collection_userInfo.update_one({"_id":author}, {"$set": {"balance": int(userBalance) - int(bet)}})
@@ -274,7 +305,7 @@ async def account(ctx):
 
 
     
-            for item in record:
+            for item in reversed(record):
                 net_profit = net_profit + item[2]
                 roundedPayout = round(item[2],2)
                 if item[0] == "Win":
@@ -330,8 +361,8 @@ async def payout(ctx,eventID,winner):
                 #payout logic 
                
                 payoutMultiplier = getDecimalOdds(odds)
-                newBalance = (int(bet['amount']) * payoutMultiplier) + user['balance']
-                earnings = newBalance - (int(user['balance']) + int(bet['amount']))
+                newBalance = (float(bet['amount']) * payoutMultiplier) + user['balance']
+                earnings = newBalance - (float(user['balance']) + float(bet['amount']))
                 collection_userInfo.update_one({"_id": user_id}, {"$set": {"balance": newBalance}})
                 conquisatadors.append(user_id)
 
@@ -346,7 +377,7 @@ async def payout(ctx,eventID,winner):
                 collection_userInfo.update_one({"_id":user_id},{"$set": {"record":user_record_temp}})
 
             else:
-                earnings = -1 * int(bet['amount'])
+                earnings = -1 * float(bet['amount'])
                 user_record_temp = user['record']
                 new_record = ["Loss",eventID,earnings,bet['key'], bet['event_teams']]
                 user_record_temp.append(new_record)
@@ -463,7 +494,7 @@ async def payoutlist(ctx):
         embed.add_field(name="#", value=eventNumber, inline=True)
         embed.add_field(name="Event ID", value=eventID, inline=True)
         embed.add_field(name="Teams", value=eventTeams, inline=True)
-        embed.set_footer(text="Enter ;payoutlist to display this embed xd")
+        embed.set_footer(text="To payout use: ;payout <eventID> <Winning Team> ")
         await ctx.send(embed=embed)
 
 
@@ -505,7 +536,13 @@ async def deletebet(ctx, index):
             await ctx.send(embed=embed)
 
         else:
+            
+            user = collection_userInfo.find_one({'_id': author})
+            userBalance = user['balance']
+            paybackAmount = delete["amount"]
             collection_userBets.delete_one(delete)
+            collection_userInfo.update_one({"_id":author}, {"$set": {"balance": userBalance + paybackAmount}})
+
             embed=discord.Embed(title="Bet Deleted", description=f"{ctx.author.mention}, the specified bet has been removed.", color=0x2309ec)
             embed.set_footer(text="NOTE: You can NOT delete a bet if the event starts in less than 24 hours.")
             await ctx.send(embed=embed)
@@ -535,7 +572,8 @@ async def help(ctx):
 async def admin(ctx):
     embed=discord.Embed(title="Admin Commands", description="If you are not an admin, close your eyes", color=0x8c6ef0)
     embed.add_field(name=";payout <eventID> <winner>", value="The winner must be values '1' or '2'. This command payouts everyone with a bet for a given ID and then deletes their bet. ", inline=False)
-    embed.add_field(name=";addEvent <team1> <team2> <odds1> <odds2> ", value="This command will add an event to the custom sports section", inline=False)
+    embed.add_field(name=";addEvent <team1> <team2> <odds1> <odds2> <commence_time> ", value="Adds a custom event. time format (24hr) example: '2021-06-05 04:51:34' *use quotes", inline=False)
+    
     embed.add_field(name=";payoutlist ", value="This command will display all the active events", inline=False)
     embed.add_field(name=";admin", value="This command displays this embed xd", inline=False)
     embed.set_footer(text="Developed by Wowsixk & Fry")
@@ -544,18 +582,16 @@ async def admin(ctx):
 
 @client.command(pass_context=True)
 @commands.has_any_role("Papa")
-async def addEvent(ctx, team1,team2, odds1, odds2):
+async def addEvent(ctx, team1,team2, odds1, odds2, commence_time):
 
     #generate random 3 char id 
-  
     x = ''.join(random.choices(string.ascii_letters + string.digits, k=3))
-    date1 = '22-May-2050 19:54:36'
-
+    #date1 = '22-May-2050 19:54:36'
     teams = [team1,team2]
     odds = {"h2h":[int(odds1),int(odds2)]}
-    timing = datetime.strptime(date1,'%d-%b-%Y %X')
+    commence_time_object = datetime.strptime(commence_time, '%Y-%m-%d %H:%M:%S')
 
-    collection_custom_events.insert_one({"_id": x.lower(),"teams": teams, "odds": odds, "commence_time": str(timing), "sport_nice": "custom"})
+    collection_custom_events.insert_one({"_id": x.lower(),"teams": teams, "odds": odds, "commence_time": commence_time_object, "sport_nice": "custom"})
     #collection_userBets.insert_one({"_id": eventID})
     await ctx.send("New Event Created")
 
