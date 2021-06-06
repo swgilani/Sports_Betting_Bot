@@ -161,21 +161,24 @@ async def events(ctx, key):
     else:    
         for event in events:
 
+            #logic for 24hr formatting
             conv_date = event['commence_time'].ctime()
+            shortened_date = conv_date[:len(conv_date)-8 ]
 
+            #logic for 12hr formatting 
             #print(conv_date)
-            conv_date_for_date = shorten_date(conv_date, " ", 3)
-            conv_date_for_time = shorten_date(conv_date, ":", 2)
-            time_index = shorten_date_index(conv_date_for_time, ":", 1)
-            time = conv_date_for_time[time_index-2:time_index+3]
-            time_conversion = datetime.strptime(time, "%H:%M")
-            time_conversion = time_conversion.strftime("%I:%M %p")
+            # conv_date_for_date = shorten_date(conv_date, " ", 3)
+            # conv_date_for_time = shorten_date(conv_date, ":", 2)
+            # time_index = shorten_date_index(conv_date_for_time, ":", 1)
+            # time = conv_date_for_time[time_index-2:time_index+3]
+            # time_conversion = datetime.strptime(time, "%H:%M")
+            # time_conversion = time_conversion.strftime("%I:%M %p")
 
             #2021-06-12 18:00:00 2021
 
 
-            output_date = output_date+f"{conv_date_for_date}, {time_conversion}\n"
-            #output_date = output_date+f" \n"
+            #output_date = output_date+f"{conv_date_for_date}, {time_conversion}\n"
+            output_date = output_date+f" {shortened_date}\n"
             #output = output+f"{event['id'][0:3]} | {event['teams'][0]} vs. {event['teams'][1]} | {event['odds']['h2h'][0]} to {event['odds']['h2h'][1]} | {datetime} \n"
             output_id = output_id+f"{event['id'][0:3]} \n"
             output_teams = output_teams+f"{event['teams'][0]} vs. {event['teams'][1]} \n"
@@ -497,17 +500,23 @@ async def payoutlist(ctx):
             eventTeams = eventTeams+ f"{output[i]['event_teams'][0]} vs. {output[i]['event_teams'][1]} \n"
 
             #formatting time for the payout list 
+
+            #logic for 24hr formatting 
             conv_date = output[i]['commence_time'].ctime()
+            shortened_date = conv_date[:len(conv_date)-8 ]
             #print(conv_date)
-            conv_date_for_date = shorten_date(conv_date, " ", 3)
 
-            conv_date_for_time = shorten_date(conv_date, ":", 2)
-            time_index = shorten_date_index(conv_date_for_time, ":", 1)
-            time = conv_date_for_time[time_index-2:time_index+3]
-            time_conversion = datetime.strptime(time, "%H:%M")
-            time_conversion = time_conversion.strftime("%I:%M %p")
+            #logic for 12hr formattig
+            # conv_date_for_date = shorten_date(conv_date, " ", 3)
 
-            commenceTimes = commenceTimes + f"{conv_date_for_date}, {time_conversion} \n"
+            # conv_date_for_time = shorten_date(conv_date, ":", 2)
+            # time_index = shorten_date_index(conv_date_for_time, ":", 1)
+            # time = conv_date_for_time[time_index-2:time_index+3]
+            # time_conversion = datetime.strptime(time, "%H:%M")
+            # time_conversion = time_conversion.strftime("%I:%M %p")
+
+            #commenceTimes = commenceTimes + f"{conv_date_for_date}, {time_conversion} \n"
+            commenceTimes = commenceTimes + f"{shortened_date} \n"
 
         
         # print(f"eventNumber: {eventNumber}")
