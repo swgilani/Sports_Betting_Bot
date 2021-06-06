@@ -175,7 +175,7 @@ async def events(ctx, key):
 
 
             output_date = output_date+f"{conv_date_for_date}, {time_conversion}\n"
-            output_date = output_date+f" \n"
+            #output_date = output_date+f" \n"
             #output = output+f"{event['id'][0:3]} | {event['teams'][0]} vs. {event['teams'][1]} | {event['odds']['h2h'][0]} to {event['odds']['h2h'][1]} | {datetime} \n"
             output_id = output_id+f"{event['id'][0:3]} \n"
             output_teams = output_teams+f"{event['teams'][0]} vs. {event['teams'][1]} \n"
