@@ -211,7 +211,7 @@ async def events(ctx, key):
 #     await ctx.send("Please use the command as follows: ;events <sport key>. You can get the sports key from typing the ;sports command.")
 
 @client.command()
-async def bet(ctx,bet,team, eventID,key):
+async def bet(ctx,bet,team,eventID,key):
 
 
     author = ctx.author.id
@@ -225,6 +225,7 @@ async def bet(ctx,bet,team, eventID,key):
         #getting event info 
         if key.lower() == "custom":  
             event_info = collection_custom_events.find_one({"_id": eventID})
+            print(event_info)
             teams = event_info['teams']
             teamsvs_string = f"{teams[0]} vs {teams[1]}"
             odds = event_info['odds']['h2h']
@@ -233,6 +234,8 @@ async def bet(ctx,bet,team, eventID,key):
         
         else: 
             event_info = getEventInformation(key, eventID)
+            print(event_info)
+
             teams = event_info['teams']
             teamsvs_string = f"{teams[0]} vs {teams[1]}"
             odds = event_info['odds']['h2h']
@@ -270,8 +273,9 @@ async def bet(ctx,bet,team, eventID,key):
 
     
 
-bet.error
+@bet.error
 async def on_command_error(ctx, error):
+    print(error)
     await ctx.send("Please make sure you've entered your bet correctly (;bet <bet amount> <team #> <event id> <sport id>). Type ;help for more information.")
 
 
