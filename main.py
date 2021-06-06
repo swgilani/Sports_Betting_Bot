@@ -244,10 +244,10 @@ async def bet(ctx,bet,team,eventID,key):
             
 
     
-        if ( (key.lower() != "custom") and ((int(userBalance) < int(bet)) or (int(team) != 1 and int(team) != 2)) ):
+        if ( (key.lower() != "custom") and (int(userBalance) < int(bet)) or (int(team) != 1 and int(team) != 2) ):
                 await ctx.send("Unable to process your bet. Please check your balance and betting format")
 
-        elif ((key.lower() == "custom") and ((int(userBalance) < int(bet)) or (present > start) or (int(team) != 1 and int(team) != 2)) ):
+        elif ((key.lower() == "custom") and (int(userBalance) < int(bet)) or (present > start) or (int(team) != 1 and int(team) != 2)):
                 await ctx.send("Unable to process your bet. Please check your balance and betting format")
             
         else:
