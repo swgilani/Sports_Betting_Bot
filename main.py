@@ -95,6 +95,7 @@ async def beg(ctx):
         # balance = user['balance']
         # balance = balance+5
         # collection_userInfo.update_one({"_id":author}, {"$set": {"balance": balance}})
+        #fook da meyweddas 
 
     else:
         await ctx.send("You must register before begging. Please type the -register command")
