@@ -1,4 +1,5 @@
 import discord
+from discord.utils import get
 from discord.ext import commands
 import os
 from dotenv import load_dotenv
@@ -145,11 +146,12 @@ async def sports(ctx):
 @client.command()
 async def events(ctx, key):
 
- try:
+#  try:
     events = getEvents(key)
     output = ""
     output_id = ""
     output_teams = ""
+    output_teams2 = ""
     output_odds_and_time = ""
     output_date = ""
 
@@ -159,13 +161,27 @@ async def events(ctx, key):
     
     else:    
         for event in events:
-            if key == "custom":
-                conv_date = event['commence_time'].ctime()
-                output_date = output_date+f"{conv_date}\n"
-           
+            conv_date = event['commence_time'].ctime()
+            #print(conv_date)
+            conv_date_for_date = shorten_date(conv_date, " ", 3)
+
+
+
+            conv_date_for_time = shorten_date(conv_date, ":", 2)
+            time_index = shorten_date_index(conv_date_for_time, ":", 1)
+            time = conv_date_for_time[time_index-2:time_index+3]
+            time_conversion = datetime.strptime(time, "%H:%M")
+            time_conversion = time_conversion.strftime("%I:%M %p")
+
+            #2021-06-12 18:00:00 2021
+
+
+            
+            output_date = output_date+f"{conv_date_for_date}, {time_conversion}\n"
             #output = output+f"{event['id'][0:3]} | {event['teams'][0]} vs. {event['teams'][1]} | {event['odds']['h2h'][0]} to {event['odds']['h2h'][1]} | {datetime} \n"
             output_id = output_id+f"{event['id'][0:3]} \n"
             output_teams = output_teams+f"{event['teams'][0]} vs. {event['teams'][1]} \n"
+            output_teams2 = output_teams2+f"{event['teams'][0]} vs. {event['teams'][1]} ({event['id'][0:3]}) \n" 
             output_odds_and_time = output_odds_and_time+f"{event['odds']['h2h'][0]} to {event['odds']['h2h'][1]} \n"
             name = event['sport_nice']
         embed=discord.Embed(title=f"Upcoming events for {name}", description="Event information for upcoming events",color=0x001cf0)
@@ -173,21 +189,19 @@ async def events(ctx, key):
         embed.add_field(name="Teams (1 & 2)", value=output_teams, inline=True)
         embed.add_field(name="Odds", value=output_odds_and_time, inline=True)
         embed.set_footer(text=f"Please use the ';bet <amount> <team number> <event ID> <Sport ID>' to place a bet. \nExample: ;bet 100 2 4w1 {key}")
+        
+        embed2=discord.Embed(title=f"Date & time of {name} events", description="Time information for the events",color=0x001cf0)
+        embed2.add_field(name="Teams (1 & 2)", value=output_teams2, inline=True)
+        embed2.add_field(name="Commence Time", value=output_date, inline=True)
+        embed2.set_footer(text=f"Please use the ';bet <amount> <team number> <event ID> <Sport ID>' to place a bet. \nExample: ;bet 100 2 4w1 {key}")
         await ctx.send(embed=embed)
+        await ctx.send(embed=embed2)
         
-        if key == "custom":
-            embed2=discord.Embed(title=f"Date & time of {name} events", description="Time information for the events",color=0x001cf0)
-            embed2.add_field(name="Teams (1 & 2)", value=output_teams, inline=True)
-            embed2.add_field(name="Commence Time", value=output_date, inline=True)
-            embed2.set_footer(text=f"Please use the ';bet <amount> <team number> <event ID> <Sport ID>' to place a bet. \nExample: ;bet 100 2 4w1 {key}")
-            await ctx.send(embed=embed2)
-        
-       
         
 
- except Exception as e:
+#  except Exception as e:
 
-   await ctx.send("The key you inputting was incorrect or missing. Please type ;help for more information. "+str(e))
+#    await ctx.send("The key you inputting was incorrect or missing. Please type ;help for more information. "+str(e))
 
 
 # @events.error
@@ -199,6 +213,8 @@ async def bet(ctx,bet,team, eventID,key):
 
 
     author = ctx.author.id
+    present = datetime.now()
+
     if collection_userInfo.find_one({"_id": author}):
         
         user = collection_userInfo.find_one({'_id': author})
@@ -211,7 +227,6 @@ async def bet(ctx,bet,team, eventID,key):
             teamsvs_string = f"{teams[0]} vs {teams[1]}"
             odds = event_info['odds']['h2h']
             start = event_info['commence_time']
-            present = datetime.now()
             
         
         else: 
@@ -219,6 +234,9 @@ async def bet(ctx,bet,team, eventID,key):
             teams = event_info['teams']
             teamsvs_string = f"{teams[0]} vs {teams[1]}"
             odds = event_info['odds']['h2h']
+            start = event_info['commence_time']
+
+            
 
     
         if ( (key.lower() != "custom") and (int(userBalance) < int(bet)) or (int(team) != 1 and int(team) != 2) ):
@@ -230,7 +248,7 @@ async def bet(ctx,bet,team, eventID,key):
         else:
             
             collection_userInfo.update_one({"_id":author}, {"$set": {"balance": int(userBalance) - int(bet)}})
-            post = {"user_id": author, "team": [teams[int(team)-1] , int(team)], "amount": int(bet), "event_id": eventID, "odds": odds, "key": key, "event_teams": teams}
+            post = {"user_id": author, "team": [teams[int(team)-1] , int(team)], "amount": int(bet), "event_id": eventID, "odds": odds, "key": key, "event_teams": teams, "commence_time": start}
             collection_userBets.insert_one(post)
             
             embed=discord.Embed(title="Your bet was successfully placed!", description=f"{ctx.author.mention}, you placed ${bet} on {teams[int(team)-1]}. Good luck!", color=0x44ff00)
@@ -250,9 +268,9 @@ async def bet(ctx,bet,team, eventID,key):
 
     
 
-#bet.error
-#async def on_command_error(ctx, error):
-    #await ctx.send("Please make sure you've entered your bet correctly (;bet <bet amount> <team #> <event id> <sport id>). Type ;help for more information.")
+bet.error
+async def on_command_error(ctx, error):
+    await ctx.send("Please make sure you've entered your bet correctly (;bet <bet amount> <team #> <event id> <sport id>). Type ;help for more information.")
 
 
 
@@ -390,7 +408,7 @@ async def payout(ctx,eventID,winner):
         collection_userBets.delete_many({"event_id": eventID})
         
         output = ""
-        print(conquisatadors)
+        
         for conquisatade in conquisatadors:
             output = output+"<@"+str(conquisatade)+"> "
 
@@ -475,25 +493,44 @@ async def payoutlist(ctx):
         eventNumber = ""
         eventID = ""
         eventTeams=""
+        commenceTimes=""
 
         for i in range(len(output)):
             eventNumber = eventNumber+f"{i+1} \n"
             eventID = eventID+f"{output[i]['event_id']}  \n"
             eventTeams = eventTeams+ f"{output[i]['event_teams'][0]} vs. {output[i]['event_teams'][1]} \n"
+
+            #formatting time for the payout list 
+            conv_date = output[i]['commence_time'].ctime()
+            #print(conv_date)
+            conv_date_for_date = shorten_date(conv_date, " ", 3)
+
+            conv_date_for_time = shorten_date(conv_date, ":", 2)
+            time_index = shorten_date_index(conv_date_for_time, ":", 1)
+            time = conv_date_for_time[time_index-2:time_index+3]
+            time_conversion = datetime.strptime(time, "%H:%M")
+            time_conversion = time_conversion.strftime("%I:%M %p")
+
+            commenceTimes = commenceTimes + f"{conv_date_for_date}, {time_conversion} \n"
+
         
-        print(f"eventNumber: {eventNumber}")
-        print(f"eventID: {eventID}")
-        print(f"eventTeams: {eventTeams}")
+        # print(f"eventNumber: {eventNumber}")
+        # print(f"eventID: {eventID}")
+        # print(f"eventTeams: {eventTeams}")
+        #print(f"commence times: {commenceTimes}")
 
         # if eventNumber == "":
         #     eventID = "x"
         #     eventNumber ="x"
         #     eventTeams = "x"
 
+
+
         embed=discord.Embed(title="All Current Events", description=f" These are all the events which have not been paid out.", color=0xf5cb42)
-        embed.add_field(name="#", value=eventNumber, inline=True)
+        #embed.add_field(name="#", value=eventNumber, inline=True)
         embed.add_field(name="Event ID", value=eventID, inline=True)
         embed.add_field(name="Teams", value=eventTeams, inline=True)
+        embed.add_field(name="Commence Time", value=commenceTimes, inline=True)
         embed.set_footer(text="To payout use: ;payout <eventID> <Winning Team> ")
         await ctx.send(embed=embed)
 
@@ -514,13 +551,12 @@ async def deletebet(ctx, index):
         await ctx.send("Could not find the bet in your record. Please try again.")
 
     else:
-        print(delete)
+        
         event_info = getEventInformation(delete['key'], delete['event_id'])
-        print (event_info)
-        commence_time = event_info['commence_time']
+        
+        start = event_info['commence_time']
         present = datetime.now()
-        start = datetime.strptime(commence_time, '%Y-%m-%d %H:%M:%S')
-        print(start)
+       
         diff = start - present
         days, seconds = diff.days, diff.seconds
         hours = days * 24 + seconds // 3600
@@ -529,10 +565,10 @@ async def deletebet(ctx, index):
         ##################################################################################
         #NEED TO FINISH CODE. ONLY ALLOWED TO DELTETE IF EVENT IS A SPECIFIC TIME AWAY. 
         #CANCELLING A BET ALSO HAS A PENALTY
-        if hours <= 24:
+        if hours <= 0:
             embed=discord.Embed(title="Denied", description=f"{ctx.author.mention}, This bet could not be deleted.", color=0xf50000)
             embed.set_thumbnail(url="https://lh3.googleusercontent.com/proxy/jDyt5HBuNMwTe1ugtGAEKsaJn9n4XmmEvxydQcLtBp1Km4rT5XgcAyOTGIq31DPbbH0sgafWwHohuaxXNtpUPlcf7CmXTLNQVky3PeJM1-v43j-k9Cln2O1YMh1h5HBMWeP1brKZ5rwVEj2zcQFxfjS4xKn5Ys8")
-            embed.add_field(name="Reason", value=f"A bet cannot be deleted if event is less than 24 hours away. The specified event is {hours} hour away.", inline=True)
+            embed.add_field(name="Reason", value=f"A bet cannot be deleted after the event has started.", inline=True)
             await ctx.send(embed=embed)
 
         else:
@@ -544,12 +580,12 @@ async def deletebet(ctx, index):
             collection_userInfo.update_one({"_id":author}, {"$set": {"balance": userBalance + paybackAmount}})
 
             embed=discord.Embed(title="Bet Deleted", description=f"{ctx.author.mention}, the specified bet has been removed.", color=0x2309ec)
-            embed.set_footer(text="NOTE: You can NOT delete a bet if the event starts in less than 24 hours.")
+            embed.set_footer(text="NOTE: You can NOT delete a bet after the event has started.")
             await ctx.send(embed=embed)
 
-@deletebet.error
-async def on_command_error(ctx, error):
-    await ctx.send("Please input a valid bet index to delete.")
+    @deletebet.error
+    async def on_command_error(ctx, error):
+        await ctx.send("Please input a valid bet index to delete.")
 
 
 
@@ -558,11 +594,14 @@ async def on_command_error(ctx, error):
 async def help(ctx):
     embed=discord.Embed(title="Help Guide for Me!", description="This guide provides with all the commands users and admins can perform and what they do.", color=0x001df5)
     embed.add_field(name=";register", value="You must be registered first to make any bets. Once you register, you automatically get $1000 for betting. ", inline=False)
+    embed.add_field(name=";account", value="Shows your account information", inline=False)
+    embed.add_field(name=";balance", value="Shows your current balance", inline=False)
+    embed.add_field(name=";beg", value="If user has less than $500 and no active bets, then the user can use this command to gain $500.", inline=False)
     embed.add_field(name=";sports", value="This command will give the user a list of sports that they can bet on and their sport ID. Users will use the sport ID to find events for that specific sport, as well as making bets.", inline=False)
     embed.add_field(name=";events <sport id>", value="This command takes in one argument: <sport id>. This id can be found by using the ;sports command. Users can use this command to find out all the upcoming events for a specific sport for betting purposes. Users will be given an event id for all the events. They will use this id to place their bets for those events.", inline=False)
     embed.add_field(name=";bet <bet amount> <team #> <event id> <sport id>", value="This command takes in four arguments. The first argument <bet> is the amount of money users want to bet. The second argument <team #> is the team they would like to bet on. Valid entries for team are either 1 or 2. Third argument is the event ID which users can find using the ;events <sport id> command. And finally, the last argument is the <sport id>, which users can find using the ;sports command. All of these together will allow users to bet on their team of their liking.", inline=False)
     embed.add_field(name=";mybets", value="Shows your current ongoing bets", inline=False)
-    embed.add_field(name=";deletebets <bet #> ", value="Delete any of your ongoing bets using your bet # obtained from ;mybets. NOTE: You are unable to delete bets for events that start in less than 24 hours.", inline=False)
+    embed.add_field(name=";deletebets <bet #> ", value="Delete any of your ongoing bets using your bet # obtained from ;mybets. NOTE: You are unable to delete bets for events that have already started", inline=False)
     embed.add_field(name=";help", value="self explanatory ", inline=False)
     embed.set_footer(text="Developed by Wowsixk & Fry")
     await ctx.send(embed=embed)
@@ -595,7 +634,21 @@ async def addEvent(ctx, team1,team2, odds1, odds2, commence_time):
     #collection_userBets.insert_one({"_id": eventID})
     await ctx.send("New Event Created")
 
+#making the initial announcement with Ben
+@client.command(pass_context=True)
+@commands.has_any_role("Papa")
+async def announce(ctx):
 
+
+    embed=discord.Embed(title=f"Hello Everyone!", description=f" :moneybag: {ctx.message.guild.default_role}, I'm Benjamin (aka ben) and I'm the server's betting bot. You can use me to bet on sports and other events in <#842884441361743903> . You can spend your winnings to redeem prizes! <:PogU:764011454256119809> Type ;help in betting for instructions. <:HYPERS:765321182202691664> :moneybag: ", color=0x7cff6b)
+    embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/694049574637010955/851032093115023360/cute-hamster-cartoon_167995-717.png")
+    embed.add_field(name="Shot-Caller (Tier 1: $10 000) :fire: ", value="• Discord Nitro Classic \n• $5 Gift Card (Tim Hortons, Amazon, Uber Eats) \n", inline=True)
+    embed.add_field(name="Oracle (Tier 2: $20 000) :crystal_ball:", value="• Discord Nitro (1 month)  \n• $15 Gift Card (Tim Hortons, Amazon, Uber Eats) \n", inline=False)
+    embed.add_field(name="Highroller (Tier 3: $30 000) <:gachiGASM:765786036391247882>", value="• XL RGB Gaming Mousepad  \n• $30 Gift Card (Tim Hortons, Amazon, Uber Eats) \n", inline=False)
+    embed.add_field(name="Top Doggo (Tier 4: $100 000) <:emoji_80:656309281120976896>", value="• Nintendo Switch (qty: 1) \n• Razer Deathadder V2 Gaming Mouse  \n• Logitech G413 Gaming Keyboard", inline=False)
+    embed.set_footer(text=f"Thanks to everyone who tested the Beta, all the accounts have been reset xD. Good Luck Everyone!")
+    await ctx.send(embed=embed)
+    
 
 client.run(TOKEN)
     
