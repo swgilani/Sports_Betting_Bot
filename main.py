@@ -171,16 +171,9 @@ async def events(ctx, key):
             time_conversion = datetime.strptime(time, "%H:%M")
             time_conversion = time_conversion.strftime("%I:%M %p")
 
-
-
-
-
-
-
             #2021-06-12 18:00:00 2021
 
 
-            
             output_date = output_date+f"{conv_date_for_date}, {time_conversion}\n"
             output_date = output_date+f" \n"
             #output = output+f"{event['id'][0:3]} | {event['teams'][0]} vs. {event['teams'][1]} | {event['odds']['h2h'][0]} to {event['odds']['h2h'][1]} | {datetime} \n"
@@ -302,9 +295,6 @@ async def account(ctx):
         userBalance = user['balance']
         roundedBalance = round(userBalance,2)
         record = user['record']
-
-
-
 
 
         win_counter=0

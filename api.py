@@ -163,7 +163,7 @@ def shorten_date_index(word, needle, n):
     return start
 
 
-def shorten_date(time):
+def shorten_date_alt(time):
     ts = int(time)
     dateTime = datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
     dt_object = datetime.strptime(dateTime, '%Y-%m-%d %H:%M:%S')
