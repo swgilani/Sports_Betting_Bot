@@ -76,8 +76,7 @@ async def register(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(pass_context=True)
-@commands.has_any_role("Papa")
+@client.command()
 async def beg(ctx):
     author = ctx.author.id
     beg_amount = 500.00
@@ -161,29 +160,36 @@ async def events(ctx, key):
     
     else:    
         for event in events:
+
             conv_date = event['commence_time'].ctime()
+
             #print(conv_date)
             conv_date_for_date = shorten_date(conv_date, " ", 3)
-
-
-
             conv_date_for_time = shorten_date(conv_date, ":", 2)
             time_index = shorten_date_index(conv_date_for_time, ":", 1)
             time = conv_date_for_time[time_index-2:time_index+3]
             time_conversion = datetime.strptime(time, "%H:%M")
             time_conversion = time_conversion.strftime("%I:%M %p")
 
+
+
+
+
+
+
             #2021-06-12 18:00:00 2021
 
 
             
             output_date = output_date+f"{conv_date_for_date}, {time_conversion}\n"
+            output_date = output_date+f" \n"
             #output = output+f"{event['id'][0:3]} | {event['teams'][0]} vs. {event['teams'][1]} | {event['odds']['h2h'][0]} to {event['odds']['h2h'][1]} | {datetime} \n"
             output_id = output_id+f"{event['id'][0:3]} \n"
             output_teams = output_teams+f"{event['teams'][0]} vs. {event['teams'][1]} \n"
             output_teams2 = output_teams2+f"{event['teams'][0]} vs. {event['teams'][1]} ({event['id'][0:3]}) \n" 
             output_odds_and_time = output_odds_and_time+f"{event['odds']['h2h'][0]} to {event['odds']['h2h'][1]} \n"
             name = event['sport_nice']
+        
         embed=discord.Embed(title=f"Upcoming events for {name}", description="Event information for upcoming events",color=0x001cf0)
         embed.add_field(name="Event ID", value=output_id, inline=True)
         embed.add_field(name="Teams (1 & 2)", value=output_teams, inline=True)
