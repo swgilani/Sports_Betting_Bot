@@ -225,7 +225,7 @@ async def bet(ctx,bet,team,eventID,key):
         #getting event info 
         if key.lower() == "custom":  
             event_info = collection_custom_events.find_one({"_id": eventID})
-            print(event_info)
+            #print(event_info)
             teams = event_info['teams']
             teamsvs_string = f"{teams[0]} vs {teams[1]}"
             odds = event_info['odds']['h2h']
@@ -234,7 +234,7 @@ async def bet(ctx,bet,team,eventID,key):
         
         else: 
             event_info = getEventInformation(key, eventID)
-            print(event_info)
+            #print(event_info)
 
             teams = event_info['teams']
             teamsvs_string = f"{teams[0]} vs {teams[1]}"
