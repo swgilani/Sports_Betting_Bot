@@ -243,13 +243,21 @@ async def bet(ctx,bet,team,eventID,key):
             start = event_info['commence_time']
 
             
+        if (int(userBalance) < int(bet)):
+            await ctx.send(f"Insufficient Funds. You have ${userBalance} to spend.")
+        
+        elif (int(team) != 1 and int(team) != 2):
+            await ctx.send("Please enter a valid team (1 or 2) and check the betting format.")
+        
+        elif ((key.lower() == "custom") and (present > start)):
+            await ctx.send("Sorry, you cannot bet for a custom event once it has started. This is because the odds don't change as the match goes on :(")
 
-    
-        if ( (key.lower() != "custom") and ((int(userBalance) < int(bet)) or (int(team) != 1 and int(team) != 2)) ):
-                await ctx.send("Unable to process your bet. Please check your balance and betting format")
+        # #checks if the user has enough money and chose the right team numbers
+        # if ( (key.lower() != "custom") and ((int(userBalance) < int(bet)) or (int(team) != 1 and int(team) != 2)) ):
+        #         await ctx.send("Unable to process your bet. Please check your balance and betting format")
 
-        elif ((key.lower() == "custom") and ((int(userBalance) < int(bet)) or (present > start) or (int(team) != 1 and int(team) != 2))):
-                await ctx.send("Unable to process your bet. Please check your balance and betting format")
+        # elif ((key.lower() == "custom") and ((int(userBalance) < int(bet)) or (present > start) or (int(team) != 1 and int(team) != 2))):
+        #         await ctx.send("Unable to process your bet. Please check your balance and betting format")
             
         else:
             
@@ -566,16 +574,16 @@ async def deletebet(ctx, index):
         
         start = event_info['commence_time']
         present = datetime.now()
-       
-        diff = start - present
-        days, seconds = diff.days, diff.seconds
-        hours = days * 24 + seconds // 3600
-        minutes = (seconds % 3600) // 60
-        seconds = seconds % 60
+
+        # diff = start - present
+        # days, seconds = diff.days, diff.seconds
+        # hours = days * 24 + seconds // 3600
+        # minutes = (seconds % 3600) // 60
+        # seconds = seconds % 60
         ##################################################################################
         #NEED TO FINISH CODE. ONLY ALLOWED TO DELTETE IF EVENT IS A SPECIFIC TIME AWAY. 
         #CANCELLING A BET ALSO HAS A PENALTY
-        if hours <= 0:
+        if present > start :
             embed=discord.Embed(title="Denied", description=f"{ctx.author.mention}, This bet could not be deleted.", color=0xf50000)
             embed.set_thumbnail(url="https://lh3.googleusercontent.com/proxy/jDyt5HBuNMwTe1ugtGAEKsaJn9n4XmmEvxydQcLtBp1Km4rT5XgcAyOTGIq31DPbbH0sgafWwHohuaxXNtpUPlcf7CmXTLNQVky3PeJM1-v43j-k9Cln2O1YMh1h5HBMWeP1brKZ5rwVEj2zcQFxfjS4xKn5Ys8")
             embed.add_field(name="Reason", value=f"A bet cannot be deleted after the event has started.", inline=True)
