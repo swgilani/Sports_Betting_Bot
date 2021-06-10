@@ -33,7 +33,7 @@ collection_custom_events = db['custom_events']
 client = commands.Bot(command_prefix=";",help_command=None)
 
 sad_words=['sad','depressed','unhappy','angry','mad','miserable','depressed','depressing']
-greetings = ["Greetings!", "Hello!", "Hey", "Benjamin here,"]
+greetings = ["Greetings!", "Hello!", "Hey,", "Benjamin here,", "Whats poppin!", "Hey everyone,","Hi everyone,", "Hey guys!", "Hi people,","Sup y'all,"]
 starter_encouragements=['Cheer up!','Hang in there.','You are a great person!']
 
 
@@ -147,7 +147,7 @@ async def sports(ctx):
 @client.command()
 async def events(ctx, key):
 
-#  try:
+  try:
     events = getEvents(key)
     output = ""
     output_id = ""
@@ -205,14 +205,14 @@ async def events(ctx, key):
         
         
 
-#  except Exception as e:
+  except Exception as e:
 
-#    await ctx.send("The key you inputting was incorrect or missing. Please type ;help for more information. "+str(e))
+    await ctx.send("The key you inputting was incorrect or missing. Please type ;help for more information. "+str(e))
 
 
-# @events.error
-# async def on_command_error(ctx, error):
-#     await ctx.send("Please use the command as follows: ;events <sport key>. You can get the sports key from typing the ;sports command.")
+@events.error
+async def on_command_error(ctx, error):
+    await ctx.send("Please use the command as follows: ;events <sport key>. You can get the sports key from typing the ;sports command.")
 
 @client.command()
 async def bet(ctx,bet,team,eventID,key):
