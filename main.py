@@ -321,6 +321,12 @@ async def account(ctx):
         roundedBalance = round(userBalance,2)
         record = user['record']
 
+        bets = collection_userBets.find({"user_id": author})
+        amount_in_bets = 0
+        if bets: 
+            for bet in bets:        
+                amount_in_bets += bet['amount']
+
 
         win_counter=0
         loss_counter=0
@@ -342,8 +348,6 @@ async def account(ctx):
 
         else:
 
-
-    
             for item in reversed(record):
                 net_profit = net_profit + item[2]
                 roundedPayout = round(item[2],2)
@@ -366,7 +370,7 @@ async def account(ctx):
             embed.add_field(name="Res.", value=result_record, inline=True)
             embed.add_field(name="Event", value=event_record, inline=True)
             embed.add_field(name="Payout", value=payout_record, inline=True)
-            embed.add_field(name="Account Balance", value=f"${roundedBalance}", inline=True)
+            embed.add_field(name="Account Balance", value=f"${roundedBalance} + (${amount_in_bets})", inline=True)
             embed.add_field(name="Net Profit", value=net_profit, inline=True)
             embed.set_footer(text="Use ;help for more information about all the commands.")
             await ctx.send(embed=embed)
