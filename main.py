@@ -33,7 +33,7 @@ collection_custom_events = db['custom_events']
 client = commands.Bot(command_prefix=";",help_command=None)
 
 sad_words=['sad','depressed','unhappy','angry','mad','miserable','depressed','depressing']
-greetings = ["Greetings!", "Hello!", "Hey", "Benjamin here,"]
+greetings = ["Greetings!", "Hello!", "Hey,", "Benjamin here,", "Whats poppin!", "Hey everyone,","Hi everyone,", "Hey guys!", "Hi people,","Sup y'all,"]
 starter_encouragements=['Cheer up!','Hang in there.','You are a great person!']
 
 
