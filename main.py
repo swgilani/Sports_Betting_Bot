@@ -222,6 +222,12 @@ async def bet(ctx,bet,team,eventID,key):
         
         user = collection_userInfo.find_one({'_id': author})
         userBalance = user['balance']
+
+        #for bet all 
+        if (str(bet).lower() == "all"):
+            bet = userBalance
+        
+
         
         #getting event info 
         if key.lower() == "custom":  
@@ -617,7 +623,7 @@ async def help(ctx):
     embed.add_field(name=";beg", value="If user has less than $500 and no active bets, then the user can use this command to gain $500.", inline=False)
     embed.add_field(name=";sports", value="This command will give the user a list of sports that they can bet on and their sport ID. Users will use the sport ID to find events for that specific sport, as well as making bets.", inline=False)
     embed.add_field(name=";events <sport id>", value="This command takes in one argument: <sport id>. This id can be found by using the ;sports command. Users can use this command to find out all the upcoming events for a specific sport for betting purposes. Users will be given an event id for all the events. They will use this id to place their bets for those events.", inline=False)
-    embed.add_field(name=";bet <bet amount> <team #> <event id> <sport id>", value="This command takes in four arguments. The first argument <bet> is the amount of money users want to bet. The second argument <team #> is the team they would like to bet on. Valid entries for team are either 1 or 2. Third argument is the event ID which users can find using the ;events <sport id> command. And finally, the last argument is the <sport id>, which users can find using the ;sports command. All of these together will allow users to bet on their team of their liking.", inline=False)
+    embed.add_field(name=";bet <bet amount> <team #> <event id> <sport id>", value="This command takes in four arguments. The first argument <bet> is the amount of money users want to bet or 'all'. The second argument <team #> is the team they would like to bet on. Valid entries for team are either 1 or 2. Third argument is the event ID which users can find using the ;events <sport id> command. And finally, the last argument is the <sport id>, which users can find using the ;sports command. All of these together will allow users to bet on their team of their liking.", inline=False)
     embed.add_field(name=";mybets", value="Shows your current ongoing bets", inline=False)
     embed.add_field(name=";deletebets <bet #> ", value="Delete any of your ongoing bets using your bet # obtained from ;mybets. NOTE: You are unable to delete bets for events that have already started", inline=False)
     embed.add_field(name=";help", value="self explanatory ", inline=False)
