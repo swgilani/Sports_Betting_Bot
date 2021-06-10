@@ -33,6 +33,7 @@ collection_custom_events = db['custom_events']
 client = commands.Bot(command_prefix=";",help_command=None)
 
 sad_words=['sad','depressed','unhappy','angry','mad','miserable','depressed','depressing']
+greetings = ["Greetings!", "Hello!", "Hey", "Benjamin here,"]
 starter_encouragements=['Cheer up!','Hang in there.','You are a great person!']
 
 
@@ -642,7 +643,6 @@ async def admin(ctx):
     embed.set_footer(text="Developed by Wowsixk & Fry")
     await ctx.send(embed=embed)
 
-
 @client.command(pass_context=True)
 @commands.has_any_role("Papa")
 async def addEvent(ctx, team1,team2, odds1, odds2, commence_time):
@@ -663,7 +663,6 @@ async def addEvent(ctx, team1,team2, odds1, odds2, commence_time):
 @commands.has_any_role("Papa")
 async def announce(ctx):
 
-
     embed=discord.Embed(title=f"Hello Everyone!", description=f" :moneybag: {ctx.message.guild.default_role}, I'm Benjamin (aka ben) and I'm the server's betting bot. You can use me to bet on sports and other events in <#842884441361743903> . You can spend your winnings to redeem prizes! <:PogU:764011454256119809> Type ;help in betting for instructions. <:HYPERS:765321182202691664> :moneybag: ", color=0x7cff6b)
     embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/694049574637010955/851032093115023360/cute-hamster-cartoon_167995-717.png")
     embed.add_field(name="Shot-Caller (Tier 1: $10 000) :fire: ", value="• Discord Nitro Classic \n• $5 Gift Card (Tim Hortons, Amazon, Uber Eats) \n", inline=True)
@@ -673,6 +672,16 @@ async def announce(ctx):
     embed.set_footer(text=f"Thanks to everyone who tested the Beta, all the accounts have been reset xD. Good Luck Everyone!")
     await ctx.send(embed=embed)
     
+
+@client.command(pass_context=True)
+@commands.has_any_role("Papa")
+async def talk(ctx, msg):
+
+    channel = client.get_channel(842884441361743903)
+    
+    embed=discord.Embed(title=random.choice(greetings), description=f"{msg}", color=0x7cff6b)
+    embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/694049574637010955/851032093115023360/cute-hamster-cartoon_167995-717.png")
+    await channel.send(embed=embed)
 
 client.run(TOKEN)
     
