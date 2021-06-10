@@ -30,7 +30,7 @@ def getSports():
     for data in response_data["data"]:
 
         if data["key"].startswith('soccer'):
-            if data['key'] == "soccer_epl" or data['key'] == "soccer_england_league1":
+            if data['key'] == "soccer_epl" or data['key'] == "soccer_england_league1" or data['key'] == "soccer_uefa_european_championship":
                 sports.append({"name": data['details'], "key": data['key']})
         else:
             sports.append({"name": data['details'], "key": data['key']})

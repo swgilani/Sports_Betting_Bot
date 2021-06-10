@@ -185,7 +185,9 @@ async def events(ctx, key):
             output_id = output_id+f"{event['id'][0:3]} \n"
             output_teams = output_teams+f"{event['teams'][0]} vs. {event['teams'][1]} \n"
             output_teams2 = output_teams2+f"{event['teams'][0]} vs. {event['teams'][1]} ({event['id'][0:3]}) \n" 
-            output_odds_and_time = output_odds_and_time+f"{event['odds']['h2h'][0]} to {event['odds']['h2h'][1]} \n"
+            team1odds = round(getDecimalOdds(event['odds']['h2h'][0]),2)
+            team2odds = round(getDecimalOdds(event['odds']['h2h'][1]),2)
+            output_odds_and_time = output_odds_and_time+f"{team1odds}x to {team2odds}x \n"
             name = event['sport_nice']
         
         embed=discord.Embed(title=f"Upcoming events for {name}", description="Event information for upcoming events",color=0x001cf0)
@@ -681,6 +683,8 @@ async def talk(ctx, msg):
     
     embed=discord.Embed(title=random.choice(greetings), description=f"{msg}", color=0x7cff6b)
     embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/694049574637010955/851032093115023360/cute-hamster-cartoon_167995-717.png")
+    embed.set_footer(text=f"-Benjamin (aka ben)")
+
     await channel.send(embed=embed)
 
 client.run(TOKEN)
