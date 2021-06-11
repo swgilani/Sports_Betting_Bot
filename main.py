@@ -260,7 +260,7 @@ async def bet(ctx,bet,team,eventID,key):
             start = event_info['commence_time']
 
             
-        if (int(userBalance) < int(bet) and int(userBalance) > 0):
+        if (int(userBalance) < int(bet) or int(userBalance) == 0):
             await ctx.send(f"Insufficient Funds. You have ${userBalance} to spend.")
         
         elif (int(team) != 1 and int(team) != 2):
