@@ -33,7 +33,15 @@ collection_custom_events = db['custom_events']
 client = commands.Bot(command_prefix=";",help_command=None)
 
 sad_words=['sad','depressed','unhappy','angry','mad','miserable','depressed','depressing']
-greetings = ["Greetings!", "Hello!", "Hey,", "Benjamin here,", "Whats poppin!", "Hey everyone,","Hi everyone,", "Hey guys!", "Hi people,","Sup y'all,"]
+
+#rexy greetings
+greetings_rexy = ["Greetings!", "Hello!", "Hey,", "Rexy here,", "Whats poppin!", "Hey everyone,","Hi everyone,", "Hey guys!", "Hi people,","Sup y'all,"]
+
+
+#rexy greetings
+
+#ben greetings
+greetings_ben = ["Greetings!", "Hello!", "Hey,", "Benjamin here,", "Whats poppin!", "Hey everyone,","Hi everyone,", "Hey guys!", "Hi people,","Sup y'all,"]
 starter_encouragements=['Cheer up!','Hang in there.','You are a great person!']
 
 
@@ -671,7 +679,8 @@ async def announce(ctx):
 
     embed=discord.Embed(title=f"Hello Everyone!", description=f" :moneybag: {ctx.message.guild.default_role}, I'm Benjamin (aka ben) and I'm the server's betting bot. You can use me to bet on sports and other events in <#842884441361743903> . You can spend your winnings to redeem prizes! <:PogU:764011454256119809> Type ;help in betting for instructions. <:HYPERS:765321182202691664> :moneybag: ", color=0x7cff6b)
     embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/694049574637010955/851032093115023360/cute-hamster-cartoon_167995-717.png")
-    embed.add_field(name="Shot-Caller (Tier 1: $10 000) :fire: ", value="• Discord Nitro Classic \n• $5 Gift Card (Tim Hortons, Amazon, Uber Eats) \n", inline=True)
+    embed.add_field(name="$$ SALE $$ Current ben role: $1000 :robot: ", value="• Get full control of benjamin for 3 days", inline=True )
+    embed.add_field(name="Shot-Caller (Tier 1: $10 000) :fire: ", value="• Discord Nitro Classic \n• $5 Gift Card (Tim Hortons, Amazon, Uber Eats) \n", inline=False)
     embed.add_field(name="Oracle (Tier 2: $20 000) :crystal_ball:", value="• Discord Nitro (1 month)  \n• $15 Gift Card (Tim Hortons, Amazon, Uber Eats) \n", inline=False)
     embed.add_field(name="Highroller (Tier 3: $30 000) <:gachiGASM:765786036391247882>", value="• XL RGB Gaming Mousepad  \n• $30 Gift Card (Tim Hortons, Amazon, Uber Eats) \n", inline=False)
     embed.add_field(name="Top Doggo (Tier 4: $100 000) <:emoji_80:656309281120976896>", value="• Nintendo Switch (qty: 1) \n• Razer Deathadder V2 Gaming Mouse  \n• Logitech G413 Gaming Keyboard", inline=False)
@@ -680,14 +689,24 @@ async def announce(ctx):
     
 
 @client.command(pass_context=True)
-@commands.has_any_role("Papa")
+@commands.has_any_role("current ben","Papa")
 async def talk(ctx, msg):
 
     channel = client.get_channel(842884441361743903)
     
-    embed=discord.Embed(title=random.choice(greetings), description=f"{msg}", color=0x7cff6b)
-    embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/694049574637010955/851032093115023360/cute-hamster-cartoon_167995-717.png")
-    embed.set_footer(text=f"-Benjamin (aka ben)")
+    embed=discord.Embed(title=random.choice(greetings_rexy), description=f"{msg}", color=0x7cff6b)
+
+
+    #ben pic 
+    #embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/694049574637010955/851032093115023360/cute-hamster-cartoon_167995-717.png")
+    #zawars dinosaur 
+    embed.set_thumbnail(url="https://lumiere-a.akamaihd.net/v1/images/open-uri20150422-20810-1pw6dak_23081c6b.jpeg")
+    
+    #rexy footer 
+    embed.set_footer(text=f"-Rexy")
+
+    #ben footer
+    #embed.set_footer(text=f"-Benjamin (aka ben)")
 
     await channel.send(embed=embed)
 
