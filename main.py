@@ -236,7 +236,7 @@ async def bet(ctx,bet,team,eventID,key):
 
         #for bet all 
         if (str(bet).lower() == "all"):
-            bet = userBalance
+            bet = round(userBalance,2)
         
 
         
@@ -693,20 +693,26 @@ async def announce(ctx):
 async def talk(ctx, msg):
 
     channel = client.get_channel(842884441361743903)
+    #user = client.get_user(user_id)
+
     
     embed=discord.Embed(title=random.choice(greetings_rexy), description=f"{msg}", color=0x7cff6b)
 
 
+    #271441561844318208 
     #ben pic 
     #embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/694049574637010955/851032093115023360/cute-hamster-cartoon_167995-717.png")
+    #ben footer
+    #embed.set_footer(text=f"-Benjamin (aka ben)")
+
+    
+    #rexy stuff 
     #zawars dinosaur 
     embed.set_thumbnail(url="https://lumiere-a.akamaihd.net/v1/images/open-uri20150422-20810-1pw6dak_23081c6b.jpeg")
     
     #rexy footer 
     embed.set_footer(text=f"-Rexy")
 
-    #ben footer
-    #embed.set_footer(text=f"-Benjamin (aka ben)")
 
     await channel.send(embed=embed)
 
