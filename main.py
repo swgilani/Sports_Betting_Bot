@@ -266,7 +266,7 @@ async def bet(ctx,bet,team,eventID,key):
         elif (int(team) != 1 and int(team) != 2):
             await ctx.send("Please enter a valid team (1 or 2) and check the betting format.")
         
-        elif ((key.lower() == "custom") and (present > start)):
+        elif (present > start):
             await ctx.send("Sorry, you cannot bet for a custom event once it has started. This is because the odds don't change as the match goes on :(")
 
         # #checks if the user has enough money and chose the right team numbers
