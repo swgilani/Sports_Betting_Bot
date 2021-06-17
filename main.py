@@ -672,10 +672,25 @@ async def addEvent(ctx, team1,team2, odds1, odds2, commence_time):
     #collection_userBets.insert_one({"_id": eventID})
     await ctx.send("New Event Created")
 
+#making the Season 1 end announcement 
+@client.command(pass_context=True)
+@commands.has_any_role("Papa")
+async def announce2(ctx):
+
+    channel = client.get_channel(694110022895927347)
+
+    embed=discord.Embed(title=f"Hello Everyone!", description=f" {ctx.message.guild.default_role}, we will be removing the ;beg command at 9 PM tonight and all betting will stop on June 30th to wrap up season 1 of Sports Betting. You can still make bets and redeem prizes until June 31st but you are unable to ;beg if you lose it all. Thanks to everyone who participated in the betting and I will see you all in season 2!", color=0x7cff6b)
+    embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/694049574637010955/851032093115023360/cute-hamster-cartoon_167995-717.png")
+    embed.set_footer(text=f"The all the winners will be announced at the end of the season. - Ben")
+    await channel.send(embed=embed)
+
+
 #making the initial announcement with Ben
 @client.command(pass_context=True)
 @commands.has_any_role("Papa")
 async def announce(ctx):
+
+    channel = client.get_channel(694110022895927347)
 
     embed=discord.Embed(title=f"Hello Everyone!", description=f" :moneybag: {ctx.message.guild.default_role}, I'm Benjamin (aka ben) and I'm the server's betting bot. You can use me to bet on sports and other events in <#842884441361743903> . You can spend your winnings to redeem prizes! <:PogU:764011454256119809> Type ;help in betting for instructions. <:HYPERS:765321182202691664> :moneybag: ", color=0x7cff6b)
     embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/694049574637010955/851032093115023360/cute-hamster-cartoon_167995-717.png")
@@ -685,7 +700,7 @@ async def announce(ctx):
     embed.add_field(name="Highroller (Tier 3: $30 000) <:gachiGASM:765786036391247882>", value="• XL RGB Gaming Mousepad  \n• $30 Gift Card (Tim Hortons, Amazon, Uber Eats) \n", inline=False)
     embed.add_field(name="Top Doggo (Tier 4: $100 000) <:emoji_80:656309281120976896>", value="• Nintendo Switch (qty: 1) \n• Razer Deathadder V2 Gaming Mouse  \n• Logitech G413 Gaming Keyboard", inline=False)
     embed.set_footer(text=f"Thanks to everyone who tested the Beta, all the accounts have been reset xD. Good Luck Everyone!")
-    await ctx.send(embed=embed)
+    await channel.send(embed=embed)
     
 
 @client.command(pass_context=True)
@@ -696,22 +711,23 @@ async def talk(ctx, msg):
     #user = client.get_user(user_id)
 
     
-    embed=discord.Embed(title=random.choice(greetings_rexy), description=f"{msg}", color=0x7cff6b)
+    #embed=discord.Embed(title=random.choice(greetings_rexy), description=f"{msg}", color=0x7cff6b)
+    embed=discord.Embed(title=random.choice(greetings_ben), description=f"{msg}", color=0x7cff6b)
 
 
     #271441561844318208 
     #ben pic 
-    #embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/694049574637010955/851032093115023360/cute-hamster-cartoon_167995-717.png")
+    embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/694049574637010955/851032093115023360/cute-hamster-cartoon_167995-717.png")
     #ben footer
-    #embed.set_footer(text=f"-Benjamin (aka ben)")
+    embed.set_footer(text=f"-Benjamin (aka ben)")
 
     
     #rexy stuff 
     #zawars dinosaur 
-    embed.set_thumbnail(url="https://lumiere-a.akamaihd.net/v1/images/open-uri20150422-20810-1pw6dak_23081c6b.jpeg")
+    #embed.set_thumbnail(url="https://lumiere-a.akamaihd.net/v1/images/open-uri20150422-20810-1pw6dak_23081c6b.jpeg")
     
     #rexy footer 
-    embed.set_footer(text=f"-Rexy")
+    #embed.set_footer(text=f"-Rexy")
 
 
     await channel.send(embed=embed)
