@@ -679,7 +679,7 @@ async def announce2(ctx):
 
     channel = client.get_channel(694110022895927347)
 
-    embed=discord.Embed(title=f"Hello Everyone!", description=f" {ctx.message.guild.default_role}, we will be removing the ;beg command at 9 PM tonight and all betting will stop on June 30th to wrap up season 1 of Sports Betting. You can still make bets and redeem prizes until June 31st but you are unable to ;beg if you lose it all. Thanks to everyone who participated in the betting and I will see you all in season 2!", color=0x7cff6b)
+    embed=discord.Embed(title=f"Hello Everyone!", description=f" :moneybag: {ctx.message.guild.default_role}, we will be removing the ;beg command at 9 PM tonight and all betting will stop on June 30th to wrap up season 1 of Sports Betting. You can still make bets and redeem prizes until June 31st but you are unable to ;beg if you lose it all. Thanks to everyone who participated in the betting and I will see you all in season 2! :moneybag:", color=0x7cff6b)
     embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/694049574637010955/851032093115023360/cute-hamster-cartoon_167995-717.png")
     embed.set_footer(text=f"The all the winners will be announced at the end of the season. - Ben")
     await channel.send(embed=embed)
