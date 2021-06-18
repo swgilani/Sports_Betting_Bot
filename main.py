@@ -87,27 +87,28 @@ async def register(ctx):
 
 @client.command()
 async def beg(ctx):
-    author = ctx.author.id
-    beg_amount = 500.00
+    await ctx.send("This command has been turned off for this season.")
+    # author = ctx.author.id
+    # beg_amount = 500.00
     
-    if collection_userInfo.find({"_id": author}):
+    # if collection_userInfo.find({"_id": author}):
 
-        #if the users balance is <500 and they have no current bets 
-        user = collection_userInfo.find_one({"_id": author})
-        if user['balance'] < beg_amount and not collection_userBets.find_one({"user_id":author}):
-            collection_userInfo.update_one({"_id":author}, {"$set": {"balance": beg_amount}})
-            await ctx.send("Someone gave you a few bucks! You now have $"+str(beg_amount))
+    #     #if the users balance is <500 and they have no current bets 
+    #     user = collection_userInfo.find_one({"_id": author})
+    #     if user['balance'] < beg_amount and not collection_userBets.find_one({"user_id":author}):
+    #         collection_userInfo.update_one({"_id":author}, {"$set": {"balance": beg_amount}})
+    #         await ctx.send("Someone gave you a few bucks! You now have $"+str(beg_amount))
         
-        else: 
-            await ctx.send("You must have less than $500 (with no active bets) to beg. ")
+    #     else: 
+    #         await ctx.send("You must have less than $500 (with no active bets) to beg. ")
 
-        # balance = user['balance']
-        # balance = balance+5
-        # collection_userInfo.update_one({"_id":author}, {"$set": {"balance": balance}})
-        #fook da meyweddas 
+    #     # balance = user['balance']
+    #     # balance = balance+5
+    #     # collection_userInfo.update_one({"_id":author}, {"$set": {"balance": balance}})
+    #     #fook da meyweddas 
 
-    else:
-        await ctx.send("You must register before begging. Please type the -register command")
+    # else:
+    #     await ctx.send("You must register before begging. Please type the -register command")
 
 
 
